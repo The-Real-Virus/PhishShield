@@ -46,7 +46,7 @@
 
 # Banner & Logo
 1) Banner.  
-     ![step1](images/banner.jpg)
+     ![step1](images/Banner.jpg)
 
 2) Logo 1.  
      ![step1](images/Logo1.png)
