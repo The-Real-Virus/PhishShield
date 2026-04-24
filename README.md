@@ -55,9 +55,9 @@
      ![step1](images/Logo2.png)
 
 ## License
-This project is licensed under the **MIT License**.
-Copyright (c) [2026] [The-Real-Virus]
-For more details, see the [LICENSE](LICENSE) file.
+This project is licensed under the **MIT License**.  
+Copyright (c) 2026 The-Real-Virus  
+For more details, see the [LICENSE](LICENSE) file.  
 
 # Disclaimer ⚠️
 **Educational, Research & Informational Purposes Only:** This extension is provided as a tool to assist in identifying potential phishing threats. It is not an absolute guarantee of security. 
