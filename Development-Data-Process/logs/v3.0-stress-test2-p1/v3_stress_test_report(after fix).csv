@@ -1,0 +1,801 @@
+url,expected,actual,score,latency_ms
+https://www.zhihu.com,LEGITIMATE,LEGITIMATE,17,5927.13
+https://www.postgresql.org,LEGITIMATE,LEGITIMATE,32,2124.96
+http://enchanted-nonogon-803622.framer.app/,PHISHING,PHISHING,100,955.54
+https://www.samsung.com,LEGITIMATE,LEGITIMATE,0,1617.77
+http://qantasmoney-reward.icu/info.au,PHISHING,FAILED: Page.goto: net::ERR_,0,1258.09
+https://www.umich.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1121.04
+https://www.itunes.apple.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,236.08
+https://www.validator.w3.org,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,140.64
+https://www.techtarget.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,330.19
+https://www.line.me,LEGITIMATE,FAILED: Page.goto: Navigatio,0,646.21
+https://confirm.login.globalaccesshub.com/,PHISHING,TIMEOUT,0,15014.32
+https://bbad6693.15ab0ot.pages.dev/authflow/about:blank/,PHISHING,LEGITIMATE,0,4017.01
+https://www.fb.me,LEGITIMATE,LEGITIMATE,0,2755.69
+https://priyamyadav05.github.io/Amazone-Clone/,PHISHING,PHISHING,89,987.58
+https://www.f5.com,LEGITIMATE,LEGITIMATE,34,5086.4
+https://www.cnn.com,LEGITIMATE,LEGITIMATE,0,4005.73
+https://facebook-authentication.secure-datalink.org/landing/form/283f05ab-9c28-417e-a8e0-331ce94d856b,PHISHING,PHISHING,100,1793.56
+https://www.www.ncbi.nlm.nih.gov,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,1757.98
+https://www.noaa.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,534.0
+https://www.dailymotion.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,448.21
+https://www.safety.google,LEGITIMATE,FAILED: Page.goto: Navigatio,0,894.84
+https://www.bandcamp.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1828.75
+https://www.intel.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,449.4
+https://www.nps.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,845.19
+https://www.godaddy.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2302.48
+https://9674a6915d.nxcli.io/wp-content/plugins/object-cache-pro/src/Clients/Concerns/Dkb2026/DKB_new,PHISHING,FAILED: Page.goto: Navigatio,0,2582.76
+https://loginservice.cloud/3ePefjiKDYP5Aalz,PHISHING,FAILED: Page.goto: Navigatio,0,977.43
+https://www.businesswire.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1099.49
+https://www.jhu.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1021.0
+https://www.whitehouse.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1214.58
+https://phmexotc.krako.cc/h5,PHISHING,FAILED: Page.goto: Navigatio,0,45.3
+http://pub-7286888a4a30420ca43a0a3961b944c0.r2.dev/index.html,PHISHING,FAILED: Page.goto: Navigatio,0,741.66
+https://www.webmd.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,212.2
+https://www.theguardian.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1328.52
+https://loginservice.cloud/SIDE0DmY2UYMTl0,PHISHING,FAILED: Page.goto: Navigatio,0,343.47
+https://135461223.site/lv/920/cd6eb2b7-c48c-45eb-8ae3-ddbfc774a233/730449/x,PHISHING,FAILED: Page.goto: Navigatio,0,1067.83
+https://www.wikihow.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,465.02
+https://www.dropcatch.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,747.22
+https://www.marketwatch.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,470.12
+https://www.globenewswire.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1043.83
+http://lcloud-apps.online/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Navigatio,0,3282.23
+https://facebook-authentication.secure-datalink.org/landing/form/19bbe2e7-094f-4ca0-ad8b-a34729e3e657,PHISHING,FAILED: Page.goto: Navigatio,0,287.87
+http://ipfs.io/ipfs/bafkreidurzcblohw5tttn4gfdoe2rg7z6qfkptnzlav3u7qslkswxs42jy/,PHISHING,FAILED: Page.goto: Navigatio,0,275.45
+https://www.whatsapp.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1056.71
+https://www.dribbble.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2866.04
+https://www.redhat.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,698.62
+https://www.linktr.ee,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1578.81
+https://www.openstreetmap.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,475.54
+https://www.eu.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2515.99
+https://www.hbr.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2012.47
+http://www.fenouxltd.com/verlfy/index.html,PHISHING,FAILED: Page.goto: Navigatio,0,2375.61
+http://fqaopense.pages.dev/,PHISHING,FAILED: Page.goto: Navigatio,0,242.3
+https://www.microsoftonline.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,201.45
+https://135461223.site/nl/831/dbf21e0a-8793-4fc2-aa77-25dd7cf79664/730511/x,PHISHING,FAILED: Page.goto: Navigatio,0,568.21
+https://www.support.google.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1756.51
+https://www.nytimes.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,738.53
+https://www.expireddomains.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,908.35
+https://www.wordpress.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1177.84
+https://belimite.s3.us-east-005.backblazeb2.com/aumento.html,PHISHING,FAILED: Page.goto: Navigatio,0,1015.56
+http://www.ialu2eloaj1lnfemf25077.intelligentpowersolutions.store/,PHISHING,FAILED: Page.goto: net::ERR_,0,492.54
+https://www.w.soundcloud.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,153.36
+https://www.irs.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1459.11
+https://www.foxnews.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,381.42
+https://www.googletagmanager.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,475.56
+https://binance-bgv.support/app/,PHISHING,FAILED: Page.goto: net::ERR_,0,230.77
+https://www.m.facebook.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,214.98
+https://fujikyo.com.vn/ttttttttttttttiuoeuiouioeoiueioueiouiouoiu.html,PHISHING,FAILED: Page.goto: Navigatio,0,1896.0
+https://www.pan.baidu.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,471.44
+https://www.support.apple.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1321.55
+https://9-205-104-123.cprapid.com/app/update.php,PHISHING,FAILED: Page.goto: net::ERR_,0,1428.34
+https://www.washington.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1406.25
+http://starten-uphold.zapier.app/,PHISHING,FAILED: Page.goto: Navigatio,0,1095.2
+https://www.airbnb.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,667.21
+http://my-sso-itrustcapital--h--com-auth.webflow.io/,PHISHING,FAILED: Page.goto: Navigatio,0,2065.6
+https://www.info-hadiah3339.blogspot.com/,PHISHING,FAILED: Page.goto: Navigatio,0,2152.82
+https://sso-security.com/O7zrIvsOOVgCjlj00A,PHISHING,FAILED: Page.goto: Navigatio,0,1388.91
+https://www.ec.europa.eu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2475.22
+https://www.tandfonline.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,429.97
+https://www.nbcnews.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,886.36
+https://www.worldbank.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,573.44
+https://www.wpa.qq.com,LEGITIMATE,TIMEOUT,0,15003.25
+https://mailer6-ver.mdbgo.io/?3mail@a.b.c0%22%3E%3Cstrong%3E%EC%A3%BC%EC%86%8C,PHISHING,PHISHING,97,2137.24
+https://roblox.com.ge/users/2046422266/profile,PHISHING,PHISHING,82,4002.87
+https://dinwiddiesheriff.com/,PHISHING,LEGITIMATE,17,1594.58
+https://www.allaboutcookies.org,LEGITIMATE,LEGITIMATE,0,3875.98
+https://www.uiuc.edu,LEGITIMATE,LEGITIMATE,0,6306.22
+https://www.jquery.com,LEGITIMATE,LEGITIMATE,17,1896.06
+https://ldrsd8djsd7.vincent-a05.workers.dev/,PHISHING,LEGITIMATE,0,854.69
+https://www.amazonaws.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,3296.85
+https://exchangelink0063.ink/exchange,PHISHING,FAILED: Page.goto: Navigatio,0,4531.6
+https://www.firefox.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,314.34
+https://www.pages.dev,LEGITIMATE,FAILED: Page.goto: Navigatio,0,250.4
+http://giftshopee-129.blogspot.com/,PHISHING,FAILED: Page.goto: Navigatio,0,3249.26
+https://www.launchpad.net,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1654.94
+https://www.yale.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,310.15
+https://www.oecd.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,327.83
+https://www.threads.net,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1937.47
+https://www.lnkd.in,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,301.82
+https://exchangelink0069.ink/exchange,PHISHING,FAILED: Page.goto: Navigatio,0,1511.49
+https://www.science.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,625.62
+http://pub-341f5624d2bc4c8297dedbe9f6b13d25.r2.dev/index.html,PHISHING,FAILED: Page.goto: Navigatio,0,1652.8
+https://www.discord.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,554.6
+https://loginservice.cloud/qZK4siQVUNCdGURf,PHISHING,FAILED: Page.goto: Navigatio,0,671.51
+https://fyjbvcc.github.io/paypai/,PHISHING,FAILED: Page.goto: Navigatio,0,659.83
+http://ldgercomstrt-auuth.wasmer.app/,PHISHING,FAILED: Page.goto: Navigatio,0,1334.38
+https://simplified-peach-255969.framer.app/,PHISHING,FAILED: Page.goto: Navigatio,0,354.4
+https://www.nih.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2424.6
+https://www.meetup.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2714.63
+https://exchangelink0064.ink/exchange,PHISHING,FAILED: Page.goto: Navigatio,0,3603.26
+https://www.flickr.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,582.76
+https://www.plesk.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,673.03
+https://www.britannica.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,371.69
+https://www-roblox.co/users/2046398096/profile,PHISHING,FAILED: Page.goto: Navigatio,0,3390.49
+http://qkuicuunllgn.webflow.io/,PHISHING,FAILED: Page.goto: Navigatio,0,1349.93
+https://www.news.google.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2268.72
+http://www.gemuni-logiusloog0.godaddysites.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1292.36
+https://www.wix.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,565.37
+https://www.bls.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,4104.66
+http://member234.marketing-partner-invite.com/,PHISHING,FAILED: Page.goto: Navigatio,0,710.97
+http://kucoinlogzn.webflow.io/,PHISHING,FAILED: Page.goto: Navigatio,0,1745.86
+https://www.maps.google.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,302.02
+https://www.oracle.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,500.84
+https://ipfs.io/ipfs/bafkreiayjjgi5qxrdimbryy5cm3eoswelxyociqe7s2fjqs6fnp5ncq2u4,PHISHING,FAILED: Page.goto: Navigatio,0,136.66
+https://www.jamanetwork.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1516.93
+https://plum-beautifully-875812.framer.app/,PHISHING,FAILED: Page.goto: Navigatio,0,337.98
+https://db.safemessaging.org/landing/form/52d3c494-bce6-4186-ba22-6439e7fae8eb,PHISHING,FAILED: Page.goto: Navigatio,0,1209.32
+https://www.deloitte.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,591.51
+https://sso-auth.com/t_hCvPuultL35DP6,PHISHING,FAILED: Page.goto: Navigatio,0,1043.16
+https://fecanu.frewardnest.com/moya/cu/feyeyeyo/deco/jo/index.php,PHISHING,FAILED: Page.goto: Navigatio,0,847.22
+https://www.psu.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,960.23
+https://www.cbc.ca,LEGITIMATE,FAILED: Page.goto: Navigatio,0,978.72
+https://facebook-authentication.secure-datalink.org/landing/form/2547450d-28ac-43f5-b3d0-63a32a76b3fc,PHISHING,FAILED: Page.goto: Navigatio,0,1269.31
+https://loginservice.cloud/DgPH2fSd0GFYpARs?/reactivate,PHISHING,FAILED: Page.goto: Navigatio,0,912.38
+https://www.scientificamerican.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,534.41
+https://www.youtube.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,545.43
+https://www.jotform.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1255.56
+https://www.buzzfeed.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,276.74
+https://www.en.wikipedia.org,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,291.4
+https://www.sohu.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,499.09
+https://www.harvard.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1030.42
+https://135461223.site/831/dbf21e0a-8793-4fc2-aa77-25dd7cf79664/730511,PHISHING,FAILED: Page.goto: Navigatio,0,1310.09
+https://www.fda.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1012.76
+https://www.arxiv.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,539.19
+https://cyrano-magazine.be/au-blog/org.php,PHISHING,FAILED: Page.goto: Navigatio,0,1431.18
+https://exchangelink0062.ink/exchange,PHISHING,TIMEOUT,0,15014.5
+https://www.googleusercontent.com,LEGITIMATE,LEGITIMATE,0,887.97
+http://thedeveloperasha.github.io/facebook,PHISHING,PHISHING,88,1104.86
+https://www.policies.google.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,1259.75
+https://www.us.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2434.43
+https://www.yelp.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1844.52
+https://www.android.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,627.19
+https://roblox.gs/users/8201630249/profile,PHISHING,FAILED: Page.goto: Navigatio,0,2055.71
+https://www.mashable.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,412.56
+https://www.lin.ee,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,1471.1
+https://www.sagepub.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,948.38
+https://www.indiatimes.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,130.03
+https://www.atlassian.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,447.63
+https://www.wa.link,LEGITIMATE,FAILED: Page.goto: Navigatio,0,491.04
+https://www.cornell.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1938.73
+https://www.jstor.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,738.91
+https://www.discord-login-three.vercel.app/,PHISHING,FAILED: Page.goto: Navigatio,0,2489.47
+https://www.fandom.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,259.93
+https://www.amazon.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,504.66
+https://www.apache.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,307.36
+https://www.youtube-nocookie.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,503.67
+https://precious-mermaid-c81703.netlify.app/?naps,PHISHING,FAILED: Page.goto: Navigatio,0,812.85
+https://insurancequoteaib.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1192.39
+https://www.miit.gov.cn,LEGITIMATE,FAILED: Page.goto: Navigatio,0,5599.77
+https://www.doi.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,423.6
+https://www.nasa.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,903.51
+https://www.github.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,650.28
+https://www.thelancet.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2364.25
+https://ribanholdlogip.gitbook.io/,PHISHING,FAILED: Page.goto: Navigatio,0,1670.47
+https://www.sciencedirect.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,507.92
+https://roblox.gs/discover/?Keyword=,PHISHING,FAILED: Page.goto: Navigatio,0,524.71
+https://www.eff.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,237.22
+https://ipfs.io/ipfs/bafkreiglifknoz5gbd7mj6utycncqrnmzkwk7y52mfuyvcnbe7vf5f3rny,PHISHING,FAILED: Page.goto: Navigatio,0,151.11
+https://www.sciencemag.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1792.98
+https://www.bp.blogspot.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,271.5
+https://www.freepik.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,453.68
+https://www.pewresearch.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1257.83
+https://www.mailchimp.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2126.44
+https://allegrolokalnie.54094.cfd/oferta/Czerwony-WOOM-2,PHISHING,FAILED: Page.goto: net::ERR_,0,238.17
+https://www.ico.org.uk,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1226.93
+https://www.umn.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,8977.91
+https://nid-naverauth.com/,PHISHING,FAILED: Page.goto: net::ERR_,0,2024.16
+https://www.readthedocs.io,LEGITIMATE,FAILED: Page.goto: Navigatio,0,4132.87
+https://www.statcounter.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,3071.82
+https://www.outlook.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1987.44
+https://www.store.steampowered.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,110.09
+https://www.telegram.me,LEGITIMATE,TIMEOUT,0,15008.89
+https://www.msn.com,LEGITIMATE,LEGITIMATE,0,2097.47
+https://mfacebook.com.vn/opqxdk5tkn?v,PHISHING,PHISHING,90,3787.88
+https://www.theatlantic.com,LEGITIMATE,LEGITIMATE,41,2637.26
+https://www.nationalgeographic.com,LEGITIMATE,LEGITIMATE,17,3939.5
+https://www.shopee0109.blogspot.com/,PHISHING,PHISHING,100,6411.41
+https://www.alibaba.com,LEGITIMATE,LEGITIMATE,0,2317.91
+http://tr.padisahbetresmi-girisadresi.vip/,PHISHING,PHISHING,100,2197.17
+https://www.house.gov,LEGITIMATE,LEGITIMATE,17,2401.55
+https://www.web.whatsapp.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,324.02
+https://abha28.github.io/Netflix-Clone/,PHISHING,FAILED: Page.goto: Navigatio,0,1337.51
+https://yahoooo.info/?r=cce62325-9b48-4901-b5ee-65761cf67cf3&rg=eu,PHISHING,FAILED: Page.goto: Navigatio,0,1905.66
+https://bnb.supporthelpdesk.top/,PHISHING,FAILED: Page.goto: net::ERR_,0,296.86
+https://www.pixabay.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1542.38
+http://www.ptshopee-949.blogspot.com/,PHISHING,FAILED: Page.goto: Navigatio,0,3480.22
+https://www.shopee2239.blogspot.com/,PHISHING,FAILED: Page.goto: Navigatio,0,4525.18
+https://www.shopee02.blogspot.com/,PHISHING,FAILED: Page.goto: Navigatio,0,4148.27
+https://www.abc.net.au,LEGITIMATE,FAILED: Page.goto: Navigatio,0,433.44
+https://www.beian.miit.gov.cn,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,1276.58
+https://www.businessinsider.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,369.38
+https://www.w3schools.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,214.91
+https://135461223.site/405/b950031a-7853-49d2-9ea1-9d050127695e/731635,PHISHING,FAILED: Page.goto: Navigatio,0,1055.4
+https://supersafed.standard.us-east-1.oortstorages.com/fitsal.tt,PHISHING,FAILED: Page.goto: Navigatio,0,1383.32
+https://roblox.com.ge/users/4663789703/profile,PHISHING,FAILED: Page.goto: Navigatio,0,1472.52
+http://www.layanan-shopee447.blogspot.com/,PHISHING,FAILED: Page.goto: Navigatio,0,2450.0
+http://nisha-interiors.com/plala.orr/jpn/webmai1/index.php,PHISHING,FAILED: Page.goto: Navigatio,0,1423.03
+https://www.cloudfront.net,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,204.39
+https://roblox.com.py/users/7050078287/profile,PHISHING,FAILED: Page.goto: Navigatio,0,970.46
+https://www.shopee-229.blogspot.com/,PHISHING,FAILED: Page.goto: Navigatio,0,4930.79
+https://www.getbootstrap.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,937.97
+https://www.acs.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,727.92
+https://www.netflix-clone-k25l.vercel.app/,PHISHING,FAILED: Page.goto: Navigatio,0,1429.68
+https://www.fortune.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1052.05
+https://www.wordpress.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1905.45
+https://loginservice.cloud/jWfQoSzo8KFh,PHISHING,FAILED: Page.goto: Navigatio,0,931.68
+https://www.oup.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2101.77
+http://ns2.log-in-fb.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1468.79
+https://www.slack.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2062.81
+https://www.gizmodo.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,131.76
+https://exchangelink0049.ink/exchange,PHISHING,FAILED: Page.goto: Navigatio,0,2465.85
+https://www.mailchi.mp,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1169.03
+https://sso-security.com/iLjxZKuI7kP790SqVQ,PHISHING,FAILED: Page.goto: Navigatio,0,598.74
+https://dpd.dropyano.cfd/com,PHISHING,FAILED: Page.goto: Navigatio,0,1705.95
+http://wziry.github.io/account-login/%E2%80%8F%E2%80%8Ffares.insta%20-%20%D9%86%D8%B3%D8%AE%D8%A9/insta.html,PHISHING,FAILED: Page.goto: Navigatio,0,689.94
+https://exchangelink0066.ink/exchange,PHISHING,FAILED: Page.goto: Navigatio,0,1851.15
+https://roblox.com.ge/users/419179283/profile/,PHISHING,FAILED: Page.goto: Navigatio,0,1512.58
+https://www.etsy.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,439.31
+https://www.sourceforge.net,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1718.8
+http://locate-phones.support/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Navigatio,0,1983.53
+https://www.zoom.us,LEGITIMATE,FAILED: Page.goto: Navigatio,0,998.2
+https://www.php.net,LEGITIMATE,FAILED: Page.goto: Navigatio,0,783.32
+https://www.independent.co.uk,LEGITIMATE,FAILED: Page.goto: Navigatio,0,464.28
+https://www.mitre.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1593.41
+https://www.cookiedatabase.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2806.26
+https://web.whatsapsapp.hl.cn/index.html,PHISHING,FAILED: Page.goto: Navigatio,0,1891.63
+https://www.substack.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1688.25
+http://ubicacin-appl-mapas.com/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Navigatio,0,4149.55
+https://www.mailinabox.email,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1625.52
+https://carinascatering.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1274.72
+https://support-tracking-schweiz-mydpd.design-peak.com/prv/ch/de/privatperson/paket-empfangen/paket.html?email=redacted%2540anonymized.invalid,PHISHING,FAILED: Page.goto: Navigatio,0,1501.06
+https://www.hp.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,3152.08
+https://www.pbs.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1149.38
+http://www.uuphoeld-inllog.godaddysites.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1408.38
+http://mail.www-sitecloudd.life/findmy_2026_passcode6_login/,PHISHING,FAILED: Page.goto: net::ERR_,0,214.0
+https://www.livejournal.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,817.05
+https://www.drive.google.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2636.28
+https://roblox.com.ge/users/2354999490/profile/,PHISHING,FAILED: Page.goto: Navigatio,0,1522.56
+https://www.intuit.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1183.63
+https://www.yahoo.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1383.45
+https://www.spotify.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1067.93
+http://mail.www-mobilephone.life/findmy_2026_passcode6_login,PHISHING,FAILED: Page.goto: net::ERR_,0,217.46
+https://www.bit.ly,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2325.14
+https://www.zoom.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,58.74
+https://www.xing.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,680.39
+https://www.unesco.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1629.79
+https://www.mozilla.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1068.92
+https://official-support-alert.ink/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: net::ERR_,0,268.66
+http://dpd.parcelstatyf.bond/com,PHISHING,FAILED: Page.goto: Navigatio,0,1959.35
+https://www.python.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,566.09
+https://www.telegra.ph,LEGITIMATE,TIMEOUT,0,15017.81
+https://283776coinbase.com/1/coinbase_signin?login_challenge=87019fb492fe6f03c3bdb29cf2ffb6eb,PHISHING,PHISHING,100,10369.44
+https://global-ledgr.ghost.io/desktop/,PHISHING,LEGITIMATE,0,1498.18
+https://www.cnbc.com,LEGITIMATE,LEGITIMATE,26,2976.58
+https://tr6gz.mnaces.org/,PHISHING,TIMEOUT,0,15004.17
+https://www.calendly.com,LEGITIMATE,LEGITIMATE,0,2249.0
+http://www.ebay-clone-sigma.vercel.app/,PHISHING,PHISHING,100,4712.9
+https://www.scholar.google.com,LEGITIMATE,LEGITIMATE,0,2142.31
+https://www.google.de,LEGITIMATE,LEGITIMATE,0,1896.38
+https://auth.properties/ajT-a4lk1nFxm2Bj,PHISHING,PHISHING,53,1801.36
+https://www.mp.weixin.qq.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,308.33
+https://www.stripe.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1113.38
+https://www.vimeo.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1232.22
+https://www.nginx.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,3026.4
+https://www.unsplash.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1713.33
+https://www.berkeley.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,895.86
+https://www.shopeetbk823.blogspot.com/,PHISHING,FAILED: Page.goto: Navigatio,0,3330.3
+https://www.wpastra.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,4231.64
+https://www.open.spotify.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,387.41
+https://depothub.id/img/q3ew1o/index.php?uid=3mail@a.b.c0,PHISHING,FAILED: Page.goto: Navigatio,0,1217.81
+https://gauri426.github.io/netflix-clone/,PHISHING,FAILED: Page.goto: Navigatio,0,504.45
+https://www.networkadvertising.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1788.12
+https://www.ucla.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1416.7
+https://loginservice.cloud/eKrwqXLXEOk,PHISHING,FAILED: Page.goto: Navigatio,0,660.55
+https://www.eepurl.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2369.87
+https://www.mit.edu,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1106.16
+https://mfacebook.vn/scr18d95hep?v,PHISHING,FAILED: Page.goto: Navigatio,0,1496.76
+https://pc.tagomia.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1037.44
+https://www.google.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,306.44
+http://free-kaiyunsports.com/khoviicf,PHISHING,FAILED: Page.goto: Navigatio,0,1529.36
+https://www.issuu.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,794.03
+https://whdenk.club/wwgicica/,PHISHING,FAILED: Page.goto: Navigatio,0,856.68
+https://www.squarespace.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,695.62
+https://www.pnas.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2352.87
+https://www.aliexpress.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,905.33
+https://www.youronlinechoices.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1400.74
+https://www.loc.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,225.77
+https://www.hubspot.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2536.82
+https://jamessoft.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1255.28
+https://www.example.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,309.57
+http://txdmv.psgxj.life/pay/,PHISHING,FAILED: Page.goto: net::ERR_,0,199.92
+https://loginservice.cloud/15cj0pxpZg8,PHISHING,FAILED: Page.goto: Navigatio,0,405.36
+https://78987select-fth0-capital-plans.pages.dev/help/contact/154539436197789,PHISHING,FAILED: Page.goto: Navigatio,0,242.1
+https://www.themeisle.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1614.78
+https://www.fb.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,842.74
+https://www.wiley.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,267.84
+http://wildcard.facture-rapide.fr/s/63BZGFSVBWSFCDX7Y9/584dd8/90eab167-7429-489f-99f6-ce86e8d0d81a,PHISHING,FAILED: Page.goto: Navigatio,0,913.72
+https://www.iso.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,960.66
+https://www.theverge.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,657.17
+http://mail.mydevices-ifind.us/findmy_2026_passcode6_login/,PHISHING,FAILED: Page.goto: net::ERR_,0,373.98
+https://www.oreilly.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,516.76
+https://www.git-scm.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,725.21
+http://ipfs.io/ipfs/bafkreifki2x2ookbrn2vujr5dnx5tjeg77legdonbtfy2vhul2dt64yely,PHISHING,FAILED: Page.goto: Navigatio,0,220.2
+https://www.ed.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,647.74
+https://www.myspace.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,134.25
+https://www.next-airbnb-clone-theta.vercel.app/,PHISHING,FAILED: Page.goto: Navigatio,0,3559.42
+https://exchangelink0046.ink/exchange,PHISHING,FAILED: Page.goto: Navigatio,0,2092.01
+https://www.api.whatsapp.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,294.82
+https://exchangelink0042.ink/exchange,PHISHING,FAILED: Page.goto: Navigatio,0,1943.57
+https://www.chatgpt.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,310.23
+https://www.list-manage.com,LEGITIMATE,TIMEOUT,0,15011.18
+https://www.europa.eu,LEGITIMATE,LEGITIMATE,0,4016.16
+https://www.calendar.google.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,291.73
+https://www.cdc.gov,LEGITIMATE,FAILED: Page.goto: Navigatio,0,901.73
+https://www.deviantart.com,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,168.03
+https://www.mps.gov.cn,LEGITIMATE,FAILED: Page.goto: Navigatio,0,10491.61
+https://www.tiktok.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,266.83
+https://www.openai.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,701.74
+http://kucoin-sign-up.weebly.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1942.34
+https://1036u.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1137.0
+http://4008eponfodmafhtupuxzlkq-h6ahede6cna6h2hc.z03.azurefd.net/,PHISHING,FAILED: Page.goto: Navigatio,0,274.05
+https://bafkreif5sojs2sp3b7rccp4yoy4kf6ubfix3v3nlxkv2nzxmrz35hpww4u.ipfs.dweb.link/,PHISHING,FAILED: Page.goto: Navigatio,0,320.98
+https://www.wpguardian.io,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2998.24
+https://www.elegantthemes.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,551.39
+https://www.automattic.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2455.88
+https://www.economist.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,522.81
+https://www.maps.app.goo.gl,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1346.52
+https://www.coursera.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,712.2
+https://www-87365.com/,PHISHING,FAILED: Page.goto: Navigatio,0,2936.38
+https://louiseka-10.github.io/Clone_Home_Intagram,PHISHING,FAILED: Page.goto: Navigatio,0,769.84
+https://ipfs.io/ipfs/bafybeihw7cjpyeknkhvuqh4bxopzkh6w7h6tvqp4jhk3stdl4cku7dqdse/ines.html,PHISHING,FAILED: Page.goto: Navigatio,0,126.59
+https://www.sina.com.cn,LEGITIMATE,FAILED: Page.goto: net::ERR_,0,134.8
+https://www.archive.org,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1247.98
+https://www.sedo.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,1507.52
+https://esdgte2.pages.dev/Brokeback-Mountain-Heath-Ledger/dp/B00005JOFQ/ref=tmm_dvd_swatch_0,PHISHING,FAILED: Page.goto: Navigatio,0,1474.03
+http://www.comccastnet.weebly.com/,PHISHING,FAILED: Page.goto: Navigatio,0,1404.29
+https://www.tencent.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,696.19
+https://www.tinyurl.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,581.04
+https://bridge-nav.zapier.app/us-en,PHISHING,FAILED: Page.goto: Navigatio,0,1369.32
+http://kiconilogin.webflow.io/,PHISHING,FAILED: Page.goto: Navigatio,0,1413.02
+https://www.get.adobe.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2829.95
+https://www.about.com,LEGITIMATE,FAILED: Page.goto: Navigatio,0,2364.37
+https://imtoken.ceo/,PHISHING,FAILED: Page.goto: Target pa,0,923.53
+https://www.net-flix-rust.vercel.app/,PHISHING,FAILED: Page.goto: Target pa,0,4.16
+https://www.ca.gov,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.55
+https://exchangelink0082.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,5.1
+http://giris.pasidahbet828.org/,PHISHING,FAILED: Page.goto: Target pa,0,3.59
+https://exchangelink0068.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,21.64
+http://www.infoshopee-977.blogspot.com/,PHISHING,FAILED: Page.goto: Target pa,0,4.58
+https://www.rfc-editor.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.07
+http://cosmiccoderx.github.io/Netflix_Clone,PHISHING,FAILED: Page.goto: Target pa,0,3.77
+http://d26hpdecvhwn5s.cloudfront.net/digital/disclosures/,PHISHING,FAILED: Page.goto: Target pa,0,4.11
+https://www.ovhcloud.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.82
+https://juy6378.wixsite.com/my-site-1,PHISHING,FAILED: Page.goto: Target pa,0,4.69
+http://buscar-applemaps.com/app/webroot/script/login_2026/,PHISHING,FAILED: Page.goto: Target pa,0,4.02
+http://ff3dub.klcuv.my.id/,PHISHING,FAILED: Page.goto: Target pa,0,4.11
+https://www.hhs.gov,LEGITIMATE,FAILED: Page.goto: Target pa,0,6.57
+https://www.kickstarter.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.58
+https://www.qc.ca,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.86
+https://www.time.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,6.05
+https://japaneseswordmuseumthailand.com/wp-admin/js/widgets/wpress/land/facebook/loginporn.php,PHISHING,FAILED: Page.goto: Target pa,0,3.57
+https://www.theconversation.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.48
+https://santafeseg.com.br/well-known/asoto/index.html,PHISHING,FAILED: Page.goto: Target pa,0,4.05
+https://store.communityonlinestyle.co/workshop/AK47-EternalDecay/,PHISHING,FAILED: Page.goto: Target pa,0,3.87
+https://www.si.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.14
+https://www.debian.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.97
+https://www.bloomberg.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.29
+http://www.shopee4777.blogspot.com/,PHISHING,FAILED: Page.goto: Target pa,0,5.22
+https://www.x.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.54
+https://www.investopedia.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.36
+https://web.whatsapp.com.mk.hl.cn/,PHISHING,FAILED: Page.goto: Target pa,0,4.6
+https://www.nist.gov,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.45
+https://www.cmu.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.14
+https://www.uchicago.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.45
+https://www.academia.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.46
+https://www.medium.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.16
+http://web-trezorbridg.zapier.app/,PHISHING,FAILED: Page.goto: Target pa,0,2.38
+https://www.it.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.68
+https://www.microsoft.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.35
+https://www.wikipedia.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.69
+https://www.mysql.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.0
+https://insta-supporting.github.io/instagr,PHISHING,FAILED: Page.goto: Target pa,0,3.38
+https://www.reddit.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.98
+https://www.baidu.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.62
+https://www.free.fr,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.06
+http://danaacostmerservice.gazzetta.my.id/,PHISHING,FAILED: Page.goto: Target pa,0,2.79
+https://nilimite.s3.us-east-005.backblazeb2.com/aumento.html,PHISHING,FAILED: Page.goto: Target pa,0,2.62
+https://www.box.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.35
+https://www.ftc.gov,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.81
+https://krishnakamble759.github.io/amazon-clone/,PHISHING,FAILED: Page.goto: Target pa,0,3.25
+https://apple-located.help/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Target pa,0,3.51
+https://www.indeed.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.75
+https://www.statista.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.13
+https://idicrloldsingin.duckdns.org/cbrjeuin/,PHISHING,FAILED: Page.goto: Target pa,0,2.8
+https://www.uk.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.34
+https://www.fastcompany.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.56
+https://www.ubuntu.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.95
+https://www.acm.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.44
+https://sso-auth.com/4XTW6wQmEVgc-g,PHISHING,FAILED: Page.goto: Target pa,0,2.86
+https://www.twitter.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.4
+https://www.discord.gg,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.4
+https://www.techcrunch.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.36
+https://www.walmart.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.69
+http://suinicultura.com/wp-content/verlfy/index.html,PHISHING,FAILED: Page.goto: Target pa,0,2.49
+https://samdev007-pixel.github.io/netflix-ui-clone/,PHISHING,FAILED: Page.goto: Target pa,0,3.64
+https://www.amazon.de,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.21
+https://www.elsevier.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.67
+https://sso-auth.com/3bta50W5dODl,PHISHING,FAILED: Page.goto: Target pa,0,2.6
+https://www.cambridge.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.74
+http://gemuni-logiusloog0.godaddysites.com/,PHISHING,FAILED: Page.goto: Target pa,0,4.18
+https://www.outlook.live.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.65
+https://www.iana.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.55
+https://www.bsky.app,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.66
+https://www.apps.apple.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.45
+https://www.httpd.apache.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.43
+https://www.hilton.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.39
+https://authentication.ms/KdRxhBr-pvsxWA,PHISHING,FAILED: Page.goto: Target pa,0,2.75
+https://www.w3.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.43
+http://www.u97t.xyz/,PHISHING,FAILED: Page.goto: Target pa,0,3.85
+https://www.cloudflare.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.3
+http://www.ghjioook.weebly.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.76
+https://www.docs.google.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.49
+https://www.robiox.com.py/users/219691264161/profile,PHISHING,FAILED: Page.goto: Target pa,0,2.67
+http://x112c.xyz/,PHISHING,FAILED: Page.goto: Target pa,0,3.79
+https://www.upenn.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.79
+https://www.youtu.be,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.05
+https://www.opera.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.89
+https://www.in.ua,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.26
+https://ipfs.io/ipfs/bafybeiduu3bvbiw3uhmdnkfdyjylwgbf42ltkku27yoznbah6kfbw4bgye/ine.html,PHISHING,FAILED: Page.goto: Target pa,0,3.01
+https://www.reuters.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.57
+https://www.bing.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.39
+https://www.linkedin.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.49
+https://www.qq.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.03
+https://lesargousiers.ca/wp-admin/js/widgets/telek.html,PHISHING,FAILED: Page.goto: Target pa,0,3.9
+https://www.quora.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.46
+https://roblox.com.ge/users/7657198181/profile/,PHISHING,FAILED: Page.goto: Target pa,0,2.34
+https://roblox.gs/upgrades/robux?ctx=navpopover,PHISHING,FAILED: Page.goto: Target pa,0,2.54
+http://arnav418.github.io/New-Netflix-Clone,PHISHING,FAILED: Page.goto: Target pa,0,4.49
+https://www.authsso.productoselbosque.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.58
+http://zhx-kaiyunty.com/khoviicf,PHISHING,FAILED: Page.goto: Target pa,0,2.56
+https://www.nypost.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.67
+https://www.ibm.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.59
+https://www.bilibili.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.12
+https://roblox.com.ge/users/4481427420/profile,PHISHING,FAILED: Page.goto: Target pa,0,2.48
+https://www.change.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.58
+https://exchangelink00108.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.57
+https://www.roblox.re/communities/9161997419/BladeBallX,PHISHING,FAILED: Page.goto: Target pa,0,3.48
+https://www.amzn.to,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.66
+https://www.weforum.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.43
+https://www.plus.google.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.72
+https://www.washingtonpost.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.0
+https://135461223.site/lv/405/b950031a-7853-49d2-9ea1-9d050127695e/731635,PHISHING,FAILED: Page.goto: Target pa,0,4.38
+http://ialu2eloaj1lnfemf25077.intelligentpowersolutions.store/,PHISHING,FAILED: Page.goto: Target pa,0,3.15
+https://www.blogger.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.64
+https://roblox.com.py/users/1213260696/profile,PHISHING,FAILED: Page.goto: Target pa,0,2.9
+https://www.macromedia.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.61
+https://www.aboutads.info,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.84
+https://ondemand-app-tour.vercel.app/,PHISHING,FAILED: Page.goto: Target pa,0,2.62
+https://www.princeton.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.7
+https://cdparquesol.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.83
+http://sso-azure-ca-netcoins-com-cdn-auth.webflow.io/,PHISHING,FAILED: Page.goto: Target pa,0,3.44
+https://www.robiox.com.ps/games/9096377689/Killstreak-Sword-Fighting?privateServerLinkCode=46325568173927482859692149853526,PHISHING,FAILED: Page.goto: Target pa,0,3.7
+https://zyaqtu.club/wwgicica/,PHISHING,FAILED: Page.goto: Target pa,0,2.73
+https://www.wa.me,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.5
+https://www.ns2.642017.myvds.top/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Target pa,0,2.69
+https://www.prnewswire.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,6.72
+https://www.slideshare.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.59
+https://www.healthline.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.51
+https://www.ebay.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.72
+https://www.ikea.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.89
+https://s4w.in/dTCDF,PHISHING,FAILED: Page.goto: Target pa,0,2.91
+http://pub-1d766f54f60f4b1cb76860717d399ced.r2.dev/index.html,PHISHING,FAILED: Page.goto: Target pa,0,2.4
+https://www.tripadvisor.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.06
+https://www.xinhuanet.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.05
+https://www.imgur.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.44
+http://i-sso--itrustcapital--com-auth--h.webflow.io/,PHISHING,FAILED: Page.goto: Target pa,0,2.56
+http://www.kucoin-logi-us.weebly.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.4
+https://www.facebook.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.62
+https://www.google.co.uk,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.67
+https://www.usda.gov,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.92
+https://www.marriott.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.31
+https://www.jigsaw.w3.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.7
+https://www.dx.doi.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.32
+https://www.gob.mx,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.53
+https://www.mckinsey.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.61
+https://www.binance-red-packet.vercel.app/,PHISHING,FAILED: Page.goto: Target pa,0,3.14
+https://www.orcid.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.28
+http://tr.padisahbet-resmi-tr.com/,PHISHING,FAILED: Page.goto: Target pa,0,3.45
+https://www.wiktionary.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.6
+https://lnc-secure.com/app/webroot/script/login_2026/,PHISHING,FAILED: Page.goto: Target pa,0,3.49
+https://www.cisco.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.82
+http://www.pelicanaviation.in/wett/sf_marley/sf_marley/,PHISHING,FAILED: Page.goto: Target pa,0,3.51
+https://myarvetfcv.top/?secure_connect=241*fc*&_subid=3kbi9l9.1d.6qv3&,PHISHING,FAILED: Page.goto: Target pa,0,3.32
+https://www.surveymonkey.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.08
+https://view-ledger-io.square.site/,PHISHING,FAILED: Page.goto: Target pa,0,4.36
+https://www.unicef.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.54
+https://www.utexas.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.14
+https://www.trustpilot.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,10.86
+https://coinsledger.org/connect/apps.php,PHISHING,FAILED: Page.goto: Target pa,0,4.82
+https://www.aliyun.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,5.84
+https://www.amazon-clone-sable-rho.vercel.app/,PHISHING,FAILED: Page.goto: Target pa,0,4.3
+https://connexions.mise-ajour-connexions.inovaperf.me/,PHISHING,FAILED: Page.goto: Target pa,0,3.28
+https://www.nvidia.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,7.66
+https://www.www.gov.uk,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.19
+https://www.sites.google.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.66
+https://realbenjo.github.io/Steam-Login/,PHISHING,FAILED: Page.goto: Target pa,0,2.45
+http://135461223.site/920/cd6eb2b7-c48c-45eb-8ae3-ddbfc774a233/730449,PHISHING,FAILED: Page.goto: Target pa,0,2.44
+https://www.ssrn.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.83
+https://www.forbes.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.42
+https://www.commons.wikimedia.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.26
+https://www.openssl.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.7
+https://www.newyorker.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.2
+https://www.enable-javascript.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.79
+https://americanexpress-reward0080.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.49
+https://www.newsweek.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.44
+https://www.gartner.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.29
+https://www.ted.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.61
+https://www.people.com.cn,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.16
+https://www.uci.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.0
+https://www.matterport.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.2
+http://ca.tcfje.life/dmv/c_pay.html,PHISHING,FAILED: Page.goto: Target pa,0,2.71
+https://www.m.me,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.11
+https://www.situs-undian2021.blogspot.com/,PHISHING,FAILED: Page.goto: Target pa,0,4.8
+https://www.yandex.ru,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.06
+https://www.frontiersin.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.29
+https://www.geocities.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.49
+https://www.roblox.com.bn/games/80094481358254/Sword-Fighting-773855?privateServerLinkCode=05498006350392372674309826279554,PHISHING,FAILED: Page.goto: Target pa,0,2.13
+https://exchangelink0061.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,4.15
+https://www.usgs.gov,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.52
+https://rblx.foo/s/users243671918813profile,PHISHING,FAILED: Page.goto: Target pa,0,3.17
+https://www.imdb.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.48
+https://www.weebly.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.0
+https://mail-mljieroweirhytliink.appwrite.network/,PHISHING,FAILED: Page.goto: Target pa,0,4.17
+http://binance-bgv.support/,PHISHING,FAILED: Page.goto: Target pa,0,2.24
+https://att-business.square.site/,PHISHING,FAILED: Page.goto: Target pa,0,2.58
+https://www.researchgate.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.19
+https://www.kernel.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.24
+https://www.roblox.re/users/1499510197/profile,PHISHING,FAILED: Page.goto: Target pa,0,3.89
+https://www.zdnet.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.3
+https://www.ox.ac.uk,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.0
+https://sustained-yak-785024.framer.app/,PHISHING,FAILED: Page.goto: Target pa,0,2.53
+https://www.bmj.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.15
+https://135461223.site/lv/405/b950031a-7853-49d2-9ea1-9d050127695e/731635/x,PHISHING,FAILED: Page.goto: Target pa,0,4.26
+https://www.ietf.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.88
+http://www.robiox.com.py/users/448797166296/profile,PHISHING,FAILED: Page.goto: Target pa,0,2.12
+https://www.instagram.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.24
+https://www.jimdo.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.02
+https://www.scribd.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.69
+https://www.youku.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.67
+https://www.robiox.com.py/users/485678639327/profile/,PHISHING,FAILED: Page.goto: Target pa,0,2.4
+https://facebook-authentication.secure-datalink.org/landing/form/7046c17f-3f5d-4f57-9c29-909d2dc97602,PHISHING,FAILED: Page.goto: Target pa,0,2.12
+https://www.weibo.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.71
+http://canadian-netcoins.webflow.io/,PHISHING,FAILED: Page.goto: Target pa,0,2.62
+https://www.patreon.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.79
+https://www.stackexchange.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.05
+https://www.i0.wp.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.52
+https://www.usatoday.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.13
+https://sim-owner.info/app/webroot/script/login_2026/,PHISHING,FAILED: Page.goto: Target pa,0,2.99
+https://exchangelink0065.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,3.25
+https://www.steampowered.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.51
+https://www.arstechnica.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.11
+https://www.pexels.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.14
+https://www.forms.gle,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.99
+https://www.wired.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.04
+https://www.nginx.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.26
+http://www.shopee1969.blogspot.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.47
+https://www.mc-whatsapp.vercel.app/,PHISHING,FAILED: Page.goto: Target pa,0,2.27
+https://www.buydomains.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.58
+http://www-mobilephone.life/findmy_2026_passcode6_login/,PHISHING,FAILED: Page.goto: Target pa,0,3.85
+https://www.jd.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.55
+http://it-support-group.com/s/63BZGFSVBWSFCDX7Y9/584dd8/90eab167-7429-489f-99f6-ce86e8d0d81a,PHISHING,FAILED: Page.goto: Target pa,0,2.31
+http://netcoins-logi--x-ca.webflow.io/,PHISHING,FAILED: Page.goto: Target pa,0,1.96
+https://tusharchaudhary08.github.io/Netflix-clone/,PHISHING,FAILED: Page.goto: Target pa,0,2.53
+https://www.googleblog.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.26
+http://watintaram.org/js/tinymce/themes/inlite/tkm.html,PHISHING,FAILED: Page.goto: Target pa,0,2.32
+https://exchangelink00109.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.05
+https://villadelsol-argentine.com/usere/,PHISHING,FAILED: Page.goto: Target pa,0,2.47
+https://www.beian.gov.cn,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.4
+https://roblox.com.ge/users/1343621955/profile/,PHISHING,FAILED: Page.goto: Target pa,0,4.44
+https://www.wikimedia.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.45
+https://www.dell.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.35
+https://exchangelink0043.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.08
+https://www.springer.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.24
+https://www.skype.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.36
+https://www.arcgis.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.79
+https://www.wisc.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.02
+https://musiikkiterapiapalvelut.fi/face%D0%B2%CF%83%CF%83%CE%BA-store/market%CF%81Iace/item/113784843123,PHISHING,FAILED: Page.goto: Target pa,0,2.56
+https://www.letsencrypt.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.89
+https://www.state.gov,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.46
+https://www.bund.de,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.91
+https://www.apa.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.49
+https://www.who.int,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.27
+https://www.vox.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.53
+https://www.thenai.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.6
+https://exchangelink00110.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.52
+https://www.bbb.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.42
+https://www.g.page,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.3
+https://www.gc.ca,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.62
+http://www-sitecloudd.life/findmy_2026_passcode6_login/,PHISHING,FAILED: Page.goto: Target pa,0,2.71
+http://ms0ffice-portal-login-m365home-4r5ure6rt6t0k.pages.dev/,PHISHING,FAILED: Page.goto: Target pa,0,2.48
+https://www.business.site,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.96
+https://www.columbia.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.47
+https://www.soundcloud.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.47
+http://ss-o-ndax-io.zapier.app/,PHISHING,FAILED: Page.goto: Target pa,0,2.93
+https://www.or.kr,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.78
+https://www.pinterest.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.31
+https://www.nature.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.89
+https://www.dw.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.95
+https://www.tumblr.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.98
+https://roblox.com.ge/users/725822301/profilethu,PHISHING,FAILED: Page.goto: Target pa,0,2.15
+https://www.salesforce.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.03
+https://8ujoo-4.pages.dev/customer-preferences/country?ie=UTF8&preferencesReturnUrl=/gp/video/detail/b0cgs8fjds/ref=atv_dp_amz_c_ts8274d9_1_5?language=zh&ref_=footer_icp_cp/,PHISHING,FAILED: Page.goto: Target pa,0,2.69
+https://www.live.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.54
+https://www.paypal.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.6
+https://dpd.expresszone.cfd/com,PHISHING,FAILED: Page.goto: Target pa,0,3.87
+https://www.azurewebsites.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,13.79
+https://www.googleapis.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,9.52
+https://www.npr.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,6.18
+https://www.gravatar.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,5.01
+https://www.amazon.co.uk,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.04
+https://www.sun.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.26
+https://www.go.kr,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.05
+https://www.merriam-webster.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.46
+https://www.ovh.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.72
+https://www.biomedcentral.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,5.6
+https://www.fb.watch,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.52
+https://www.usnews.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.82
+https://www.sciencedaily.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.71
+https://www.office365.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.27
+https://www.epa.gov,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.63
+https://www.robiox.com.py/games/88270880256027/WORKING-SUSSY-SWAP-SIMULATOR-2?privateServerLinkCode=005277144126727567749812678521,PHISHING,FAILED: Page.goto: Target pa,0,2.15
+https://exchangelink0045.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.4
+https://exchangelink0067.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,3.52
+https://www.cbsnews.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.43
+http://litere.uvt.ro/conferinte,PHISHING,FAILED: Page.goto: Target pa,0,2.02
+https://www.themeforest.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.41
+http://543434565545.weebly.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.05
+https://www.huffpost.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.93
+https://www.fao.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.31
+https://www.vice.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.18
+https://www.elpais.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.46
+https://aumentoviote.s3.us-east-005.backblazeb2.com/aumento.html,PHISHING,FAILED: Page.goto: Target pa,0,2.17
+https://www.docker.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.51
+https://roblox.com.py/communities/1380787158/OfficialPopUni,PHISHING,FAILED: Page.goto: Target pa,0,3.59
+https://www.zendesk.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.75
+https://www.addtoany.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.19
+https://www.huawei.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.74
+https://www.tripod.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.16
+http://kucoinkinlogiell.webflow.io/,PHISHING,FAILED: Page.goto: Target pa,0,3.31
+https://www.dropbox.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.47
+https://www.bbc.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.32
+https://www.canada.ca,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.01
+https://3yusq7ngwdm363cj87v96-1drvsharespoint.pavonselawgroup.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.67
+https://www.robiox.com.py/users/452836409845/profile,PHISHING,FAILED: Page.goto: Target pa,0,2.05
+https://www.psychologytoday.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.87
+https://www.in.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.29
+https://www.huffingtonpost.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.55
+https://www.wpguardian.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.89
+https://roblox.gs/search/users/?keyword=,PHISHING,FAILED: Page.goto: Target pa,0,2.18
+https://www.mayoclinic.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.61
+https://www.bbc.co.uk,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.39
+https://www.cnet.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.94
+https://apleogoin1.duckdns.org/iociwbly/,PHISHING,FAILED: Page.goto: Target pa,0,2.33
+https://kaushikchakravorty.com/ee174/,PHISHING,FAILED: Page.goto: Target pa,0,2.01
+http://bitmartlogin.webflow.io/,PHISHING,FAILED: Page.goto: Target pa,0,2.48
+https://carry67lean455f.square.site/,PHISHING,FAILED: Page.goto: Target pa,0,3.52
+https://official-support-help.info/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Target pa,0,2.31
+https://www.giphy.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.86
+https://authsso.productoselbosque.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.62
+https://www.aol.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.07
+https://www.web.archive.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.12
+https://facebook-authentication.secure-datalink.org/landing/form/3da4f9e9-b394-4cd7-a268-8375c98669d9,PHISHING,FAILED: Page.goto: Target pa,0,2.17
+https://www.un.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.26
+https://www.cam.ac.uk,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.93
+https://www.vk.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.65
+https://www.share.google,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.47
+https://www.g.co,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.42
+https://situs-shopee19.blogspot.com/?m=1,PHISHING,FAILED: Page.goto: Target pa,0,1.87
+https://official-iphone.info/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Target pa,0,2.5
+https://www.behance.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.98
+https://www.odoo.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.29
+http://www.v18l.xyz/,PHISHING,FAILED: Page.goto: Target pa,0,4.07
+https://www.disqus.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.35
+https://www.booking.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.99
+http://roblox.gs/users/4350439809/profile,PHISHING,FAILED: Page.goto: Target pa,0,2.53
+https://depothub.id/img/q3ew1o/index.php/,PHISHING,FAILED: Page.goto: Target pa,0,1.88
+https://www.info-pemenang72.blogspot.com/,PHISHING,FAILED: Page.goto: Target pa,0,3.92
+http://metadonnes.wpenginepowered.com/pm/,PHISHING,FAILED: Page.goto: Target pa,0,2.66
+https://www.ft.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.65
+https://www.cpanel.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.15
+http://one.link/evink/1,PHISHING,FAILED: Page.goto: Target pa,0,1.94
+https://web.whatsapp.mk.hl.cn/,PHISHING,FAILED: Page.goto: Target pa,0,3.58
+https://auth-secure.me/aHS0lPwJXIgH,PHISHING,FAILED: Page.goto: Target pa,0,2.16
+https://www.player.vimeo.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.18
+http://insta-verify-now.cyou/,PHISHING,FAILED: Page.goto: Target pa,0,1.91
+https://www.moodle.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.46
+https://getting-desktop.wixstudio.com/us-en,PHISHING,FAILED: Page.goto: Target pa,0,2.14
+https://www.twitch.tv,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.86
+https://www.gitlab.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.17
+https://www.vercel.app,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.3
+http://www.ptshopee2777.blogspot.com/,PHISHING,FAILED: Page.goto: Target pa,0,1.9
+http://kucoinexcange.weebly.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.18
+https://location-appl-mape.com/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Target pa,0,2.8
+https://www.goodreads.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.75
+https://www.accounts.google.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.07
+https://www.typepad.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.77
+https://www.go.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.91
+http://learns-bridge-trez.typedream.app/,PHISHING,FAILED: Page.goto: Target pa,0,3.03
+https://www.cpanel.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.07
+https://www.t.co,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.24
+http://www.instant-verify.vercel.app/,PHISHING,FAILED: Page.goto: Target pa,0,2.24
+https://www.naver.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.6
+https://www.netflix.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.8
+https://qantasmoney-reward.icu/info.au/,PHISHING,FAILED: Page.goto: Target pa,0,3.82
+https://airbnb-clone-farukipekcom.vercel.app/online-experiences.html/,PHISHING,FAILED: Page.goto: Target pa,0,2.18
+https://exchangelink0070.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.5
+https://www.mdpi.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.02
+https://www.stanford.edu,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.4
+https://www.canva.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.36
+https://www.office.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.3
+https://www.awu73m0t-sso-uphold-en.vercel.app/,PHISHING,FAILED: Page.goto: Target pa,0,2.12
+https://www.blogspot.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.18
+https://www.163.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.99
+https://www.github.io,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.03
+https://phmexotc.krako.cc/,PHISHING,FAILED: Page.goto: Target pa,0,2.09
+https://www.robiox.com.py/games/1537690962/Bee-Swarm-Simulator?privateServerLinkCode=046669058921466022733654381262,PHISHING,FAILED: Page.goto: Target pa,0,2.29
+https://www.goo.gl,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.01
+https://www.apnews.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.5
+https://www.wixsite.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.25
+https://phmexotc.krako.cc/h5/,PHISHING,FAILED: Page.goto: Target pa,0,3.7
+http://web.whatsapp.qn.hl.cn/,PHISHING,FAILED: Page.goto: Target pa,0,2.09
+https://www.itu.int,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.65
+https://www.typeform.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.04
+https://www.dailymail.co.uk,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.44
+https://www.engadget.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.51
+https://www.outlook.office.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.43
+http://netcoins-logi--ca.webflow.io/,PHISHING,FAILED: Page.goto: Target pa,0,1.99
+https://www.ieee.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.43
+https://www.taobao.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.95
+https://www.hugedomains.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.21
+https://apple-location.ink/app/webroot/script/login_2026/,PHISHING,FAILED: Page.goto: Target pa,0,2.42
+https://www.gofundme.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.46
+https://www.wp.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.23
+https://www.admin.ch,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.56
+https://www.gouv.fr,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.11
+http://www.025-tu-clausthal-de.weebly.com/,PHISHING,FAILED: Page.goto: Target pa,0,3.86
+https://www.stackoverflow.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.01
+https://www.latimes.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.45
+https://www.aboutcookies.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.94
+https://sanketpaygude353.github.io/SpotifyWebPageClone/,PHISHING,FAILED: Page.goto: Target pa,0,2.14
+https://roblox.com.ge/users/4748187551/profile/,PHISHING,FAILED: Page.goto: Target pa,0,3.18
+https://www.play.google.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.12
+https://www.myshopify.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.24
+https://courtklekas.com/,PHISHING,FAILED: Page.goto: Target pa,0,2.15
+http://live-kai-kaiyun.com/khoviicf,PHISHING,FAILED: Page.goto: Target pa,0,1.77
+https://exchangelink0044.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.96
+https://www.shopify.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.52
+https://www.gnu.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.0
+https://www.telegraph.co.uk,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.83
+https://www.t.me,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.2
+https://www.doubleclick.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.84
+https://www.apple.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,4.44
+https://www.go.id,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.15
+https://landlordsgopher.info/?app_vl=ZoFwlG1ob2KEmLqxy5qmnnx0YsC2wa-TpaiVYsBxj2phmqOgnLFwrYw&e=3mail@a.b.c0&sui=%7Bsui%7D&fn=jozef&ln=sbeczka&p=&z=PL-S1s-22-04-24-click-0603-ind9,PHISHING,FAILED: Page.goto: Target pa,0,2.72
+https://www.akismet.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.93
+http://trezorswalletin.webflow.io/,PHISHING,FAILED: Page.goto: Target pa,0,2.48
+https://www.creativecommons.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,3.54
+https://exchangelink0048.ink/exchange,PHISHING,FAILED: Page.goto: Target pa,0,2.41
+https://www.eventbrite.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,1.86
+https://www.adobe.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.5
+https://dssegurosplus.com.br/mayjune/,PHISHING,FAILED: Page.goto: Target pa,0,2.01
+https://www.sharepoint.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.47
+http://f.digitalmaillane.com/igit/4/ezk8wkaNdsa52m5gwqN0s7N67hzhaqNfqvNrskN3gNwNp,PHISHING,FAILED: Page.goto: Target pa,0,3.03
+https://www.plos.org,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.28
+http://roblox.com.ge/users/3291444630/profile,PHISHING,FAILED: Page.goto: Target pa,0,1.86
+https://www.windows.net,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.47
+https://ibro.standard.us-east-1.oortstorages.com/fitsal.xcx,PHISHING,FAILED: Page.goto: Target pa,0,1.86
+http://apple-es-maps.support/app/webroot/script/login_2026,PHISHING,FAILED: Page.goto: Target pa,0,2.39
+http://official-iphone.help/app/webroot/script/login_2026/,PHISHING,FAILED: Page.goto: Target pa,0,3.3
+https://www.wsj.com,LEGITIMATE,FAILED: Page.goto: Target pa,0,2.49
+http://key-longzhu.com/khoviicf,PHISHING,FAILED: Page.goto: Target pa,0,1.95

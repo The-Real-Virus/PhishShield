@@ -1,0 +1,209 @@
+train 1 parametrs and results:
+model = RandomForestClassifier(
+    n_estimators=100,      # Stability (was 20)
+    max_depth=10,          # Size Control (<500KB)
+    min_samples_leaf=15,   # Prevents Overfitting (Real-world fix)
+    max_features='sqrt',   # Diversity
+    random_state=42
+)
+
+PS E:\FYP\PhishShield> python src/train_rf_model.py 
+Loading data from E:\FYP\PhishShield\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 86.65%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.91      0.87      1945
+    Phishing       0.91      0.82      0.86      2055
+
+    accuracy                           0.87      4000
+   macro avg       0.87      0.87      0.87      4000
+weighted avg       0.87      0.87      0.87      4000
+
+Confusion Matrix (Console):
+[[1771  174]
+ [ 360 1695]]
+
+[Visual] Confusion Matrix saved to: E:\FYP\PhishShield\models\confusion_matrix.png
+[Success] Trained model saved to: E:\FYP\PhishShield\models\phishshield_rf.joblib
+file size 392kb
+
+train 2 parametrs and results:
+model = RandomForestClassifier(
+    n_estimators=50,
+    max_depth=10,
+    min_samples_leaf=15,
+    max_features='sqrt',
+    random_state=42
+)
+
+PS E:\FYP\PhishShield> python src/train_rf_model.py
+Loading data from E:\FYP\PhishShield\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 86.60%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.91      0.87      1945
+    Phishing       0.91      0.83      0.86      2055
+
+    accuracy                           0.87      4000
+   macro avg       0.87      0.87      0.87      4000
+weighted avg       0.87      0.87      0.87      4000
+
+Confusion Matrix (Console):
+[[1768  177]
+ [ 359 1696]]
+
+[Visual] Confusion Matrix saved to: E:\FYP\PhishShield\models\confusion_matrix.png
+[Success] Trained model saved to: E:\FYP\PhishShield\models\phishshield_rf.joblib
+file size 199kb
+
+train 3 parametrs and results:
+model = RandomForestClassifier(
+    n_estimators=20,
+    max_depth=10,
+    min_samples_leaf=10,
+    max_features='sqrt',
+    random_state=42
+)
+
+PS E:\FYP\PhishShield> python src/train_rf_model.py
+Loading data from E:\FYP\PhishShield\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 86.92%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.92      0.87      1945
+    Phishing       0.91      0.83      0.87      2055
+
+    accuracy                           0.87      4000
+   macro avg       0.87      0.87      0.87      4000
+weighted avg       0.87      0.87      0.87      4000
+
+Confusion Matrix (Console):
+[[1780  165]
+ [ 358 1697]]
+
+[Visual] Confusion Matrix saved to: E:\FYP\PhishShield\models\confusion_matrix.png
+[Success] Trained model saved to: E:\FYP\PhishShield\models\phishshield_rf.joblib
+file size 97kb
+
+train 4 parametrs and results:
+model = RandomForestClassifier(
+    n_estimators=20,
+    max_depth=10,
+    random_state=42
+)
+
+PS E:\FYP\PhishShield> python src/train_rf_model.py
+Loading data from E:\FYP\PhishShield\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 87.30%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.92      0.88      1945
+    Phishing       0.92      0.83      0.87      2055
+
+    accuracy                           0.87      4000
+   macro avg       0.88      0.87      0.87      4000
+weighted avg       0.88      0.87      0.87      4000
+
+Confusion Matrix (Console):
+[[1795  150]
+ [ 358 1697]]
+
+[Visual] Confusion Matrix saved to: E:\FYP\PhishShield\models\confusion_matrix.png
+[Success] Trained model saved to: E:\FYP\PhishShield\models\phishshield_rf.joblib
+file size 283kb
+
+train 5 parametrs and results:
+model = RandomForestClassifier(
+    n_estimators=50,
+    max_depth=10,
+    random_state=42
+)
+
+PS E:\FYP\PhishShield> python src/train_rf_model.py
+Loading data from E:\FYP\PhishShield\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 87.33%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.92      0.88      1945
+    Phishing       0.92      0.83      0.87      2055
+
+    accuracy                           0.87      4000
+   macro avg       0.88      0.87      0.87      4000
+weighted avg       0.88      0.87      0.87      4000
+
+Confusion Matrix (Console):
+[[1794  151]
+ [ 356 1699]]
+
+[Visual] Confusion Matrix saved to: E:\FYP\PhishShield\models\confusion_matrix.png
+[Success] Trained model saved to: E:\FYP\PhishShield\models\phishshield_rf.joblib
+file size 692kb
+
+train 6 parametrs and results:
+model = RandomForestClassifier(
+    n_estimators=100,      # Stability
+    max_depth=12,          # Size Control (<500KB)
+    min_samples_leaf=15,   # Prevents Overfitting (Real-world fix)
+    max_features='sqrt',   # Diversity
+    random_state=42
+)
+
+PS E:\FYP\PhishShield> python src/train_rf_model.py
+Loading data from E:\FYP\PhishShield\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 86.50%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.91      0.87      1945
+    Phishing       0.90      0.82      0.86      2055
+
+    accuracy                           0.86      4000
+   macro avg       0.87      0.87      0.86      4000
+weighted avg       0.87      0.86      0.86      4000
+
+Confusion Matrix (Console):
+[[1765  180]
+ [ 360 1695]]
+
+[Visual] Confusion Matrix saved to: E:\FYP\PhishShield\models\confusion_matrix.png
+[Success] Trained model saved to: E:\FYP\PhishShield\models\phishshield_rf.joblib
+file size 397kb
+______________________________________WE CHOOSE TRAIN 1 FOR v4____________________________________________________
+
+PS E:\FYP\PhishShield> python src/deploy_rf_model.py
+Loading trained model from: E:\FYP\PhishShield\models\phishshield_rf.joblib...
+Model loaded successfully.
+Transpiling model to JavaScript (m2cgen)...
+[Saved] JS Model Archive: E:\FYP\PhishShield\models\model_logic.js
+
+SUCCESS! Deployment Complete.
+Final JavaScript Model Size: 365.20 KB

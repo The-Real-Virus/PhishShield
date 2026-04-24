@@ -1,0 +1,77 @@
+[Living Whitelist] Checking for updates from GitLab...
+background.js:22 [Local Fallback] Loaded 950 domains from storage.
+background.js:28 [Local Fallback] Loaded 19 hashes from storage.
+background.js:47 [Living Whitelist] Success! Updated with 950 domains.
+background.js:55 [Phase 3] Checking for visual hash updates...
+background.js:63 [Phase 3] Success! Updated with 19 visual hashes.
+
+⏱️ Layer 2 (ML+NLP) executed in: 0.70 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 2.50 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.10 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 0.70 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:194 Visual scan failed Error: Cannot access contents of the page. Extension manifest must request permission to access the respective host.
+(anonymous) @ background.js:194
+await in (anonymous)
+(anonymous) @ background.js:232Understand this error
+background.js:225 ⏱️ Total PhishShield Pipeline: 4.30 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 5.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 141.00 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 148.10 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.30 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 51.80 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 52.90 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 56.10 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 57.00 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 58.90 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 60.40 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 72.90 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 74.10 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.30 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 55.60 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 56.80 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.30 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 55.90 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 57.30 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 62.00 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 62.90 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.10 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 63.00 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 64.20 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.00 ms
+background.js:194 Visual scan failed Error: The 'activeTab' permission is not in effect because this extension has not been in invoked.
+(anonymous) @ background.js:194
+await in (anonymous)
+(anonymous) @ background.js:232Understand this error
+background.js:225 ⏱️ Total PhishShield Pipeline: 1.50 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.70 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 60.60 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 62.00 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.10 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 55.10 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 55.90 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 60.40 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 61.70 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 59.40 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 60.40 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.30 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 60.00 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 61.30 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.30 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 63.50 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 64.40 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.30 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 56.10 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 57.10 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 88.40 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 89.10 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.10 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 60.90 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 61.70 ms

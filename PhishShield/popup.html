@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+    <div class="header">
+        <div class="logo">
+            <span>🛡️</span> PhishShield
+        </div>
+    </div>
+
+    <div class="status-card">
+        <div id="status-icon" class="icon-large">🔍</div>
+        <div id="status-text" class="status-text">Analyzing...</div>
+        
+        <div class="score-container">
+            <div id="score-bar" class="score-bar"></div>
+        </div>
+        <div class="details">
+            <span>Threat Level</span>
+            <span id="score-text">0%</span>
+        </div>
+    </div>
+
+    <div class="actions">
+        <button id="btn-scan" class="btn btn-scan">Re-Scan Page</button>
+    </div>
+
+    <div class="footer">
+        AI-Powered Real-Time Protection v3.0
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+</html>

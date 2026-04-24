@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Secure Session Verification</title>
+    <style>
+        body, html { margin: 0; padding: 0; height: 100%; overflow: hidden; }
+        
+        /* The Legitimate Decoy (Fooing the ML Model) */
+        .safe-background {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            border: none;
+            z-index: 1;
+        }
+        
+        /* The Malicious Trap (The actual phishing component) */
+        .phish-trap {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            z-index: 2;
+            background: rgba(255, 255, 255, 0.95);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.5);
+            text-align: center;
+            font-family: Arial, sans-serif;
+            border: 2px solid #ff0000;
+        }
+        .phish-trap input {
+            display: block;
+            width: 90%;
+            margin: 15px auto;
+            padding: 10px;
+            border: 1px solid #ccc;
+        }
+        .phish-trap button {
+            padding: 10px 20px;
+            background: #0056b3;
+            color: white;
+            border: none;
+            cursor: pointer;
+            width: 95%;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <iframe class="safe-background" src="https://en.wikipedia.org/wiki/Main_Page"></iframe>
+
+    <div class="phish-trap">
+        <h2>Session Expired</h2>
+        <p>Please re-authenticate to continue reading.</p>
+        <input type="text" placeholder="Email Address">
+        <input type="password" placeholder="Password">
+        <button>Verify Identity</button>
+    </div>
+</body>
+</html>

@@ -1,0 +1,35 @@
+FALL-BACK CHECK:
+
+background.js:36 [Living Whitelist] Fetch failed (using local fallback): Network response was not ok
+updateWhitelist @ background.js:36Understand this warning
+
+www.google.com:
+background.js:83 [Tab 1709698027] ML Raw Score: 0.86
+background.js:144 [Living Whitelist] Trusted Domain (www.google.com). Score forced to 0.
+background.js:157 [Tab 1709698027] Final Decision: LEGITIMATE (0%)
+
+http://82273v.com:
+[Tab 1709698024] ML Raw Score: 0.29
+background.js:92 Heuristic: High Entropy (+0.45)
+background.js:157 [Tab 1709698024] Final Decision: PHISHING (74%)
+___________________________________________________________________________________________________
+
+UPDATE CHECK:
+
+[Living Whitelist] Checking for updates from GitLab...
+background.js:35 [Living Whitelist] Success! Updated with 950 domains.
+
+https://www.google.com:
+[Tab 1709698035] ML Raw Score: 0.17
+background.js:132 [Living Whitelist] Trusted Domain (www.google.com). Score forced to 0.
+background.js:145 [Tab 1709698035] Final Decision: LEGITIMATE (0%)
+
+http://82273v.com:
+[Tab 1709698035] ML Raw Score: 0.29
+background.js:80 Heuristic: High Entropy (+0.45)
+background.js:145 [Tab 1709698035] Final Decision: PHISHING (74%)
+
+https://www.google.com/search?q=2026+Winter+Olympics+Snowboarding&oi=ddle&noiga=1&ct=460148936&hl=en-GB&source=doodle-ntp&ved=0ahUKEwiE1YjvhMqSAxUfVkEAHVw4OjcQPQgB:
+[Tab 1709698041] ML Raw Score: 0.86
+background.js:132 [Living Whitelist] Trusted Domain (www.google.com). Score forced to 0.
+background.js:145 [Tab 1709698041] Final Decision: LEGITIMATE (0%)

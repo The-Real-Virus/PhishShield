@@ -1,0 +1,358 @@
+Starting with a 1,000-site benchmark (500 legit, 500 phish) is the correct engineering approach. Processing a real webpage via an automated browser usually takes 2 to 4 seconds per site depending on network speed, so a 1,000-site test will take roughly 45 to 60 minutes.
+
+Here is exactly how the automated mass-testing architecture will work:
+
+1. The Engine Upgrade (Playwright)
+We cannot use the old requests or urllib libraries. Those only download raw HTML and cannot execute JavaScript, render CSS, or trigger your extension's visual Phase 3 scanner.
+Instead, we will use Playwright (a modern Python automation library). Playwright will launch a real, invisible ("headless") Chromium browser with your PhishShield extension actually installed and running inside it.
+
+2. The Testing Loop
+For each of the 1,000 URLs, the Python script will perform the following loop:
+
+Navigate: Open a new browser tab and go to the URL.
+
+Wait for Load: Wait until the network is idle. This ensures the page's DOM is fully constructed.
+
+Trigger Extension: Your existing content.js will automatically execute, extract the 16 features, grab the NLP text, detect password fields, and send the payload to background.js.
+
+Execute Brain: background.js will run the ML, Heuristics, NLP, and Phase 3 Visual Hash (if required), and formulate a final verdict.
+
+3. The "Handshake" (How Python gets the result)
+Currently, background.js saves the result to Chrome's local storage and sends it to the popup. Playwright cannot easily read Chrome extension storage from the outside.
+To fix this, we will make a tiny addition to content.js so that when it receives the final verdict back from background.js, it injects a hidden HTML tag into the page (e.g., <meta id="phishshield-result" content="PHISHING">).
+Playwright simply reads this tag to get the final score.
+
+4. Data Collection & Teardown
+Record: The script logs the URL, the Expected Result (from our dataset), the Actual Result (from the extension), and the Time Taken.
+
+Close Tab: The script closes the tab immediately to prevent RAM overflow during the 1,000-site run.
+
+Report Generation: At the end, it generates a CSV report and a console summary showing Accuracy, False Positive Rate (FPR), and False Negative Rate (FNR).
+__________________________________________________________________________________________________
+
+Step 1: The "Handshake" (Update content.js)
+Right now, Python has no way of knowing what background.js decided because the background script lives in an isolated environment. We need to tell content.js to catch the final score and inject it into the page as a hidden <meta> tag so our Python script can read it.
+
+Action: Open extension/content.js.
+Find your existing chrome.runtime.sendMessage call and replace it with this:
+
+***********************
+// 1. Run Extraction HERE (on the page)
+const features = extractFeaturesFromPage(); // Extract URL/HTML features
+const nlpScore = calculateNLPScore(); // Run Phase 2 NLP Scan
+const currentUrl = window.location.href; // Get the URL
+
+// Phase 3: Password Field Detection
+const hasPasswordInput = document.querySelector('input[type="password"]') !== null;
+
+// 2. Send FEATURES AND URL to Background
+chrome.runtime.sendMessage({
+    action: "predict_features",
+    features: features,
+    nlpScore: nlpScore,
+    hasPassword: hasPasswordInput,
+    url: currentUrl 
+}, (response) => {
+    if (response && response.result) {
+        // --- 1. THE AUTOMATION HANDSHAKE (For Playwright Testing) ---
+        const meta = document.createElement('meta');
+        meta.id = 'phishshield-result';
+        meta.name = 'phishshield-score';
+        meta.content = `${response.result}:${response.score}`; 
+        document.head.appendChild(meta);
+        console.log(`[PhishShield] Result injected into DOM: ${meta.content}`);
+
+        // --- 2. THE VISUAL UI (For Human Users) ---
+        if (response.result === "PHISHING") {
+            const div = document.createElement('div');
+            div.style = "position:fixed; top:0; left:0; width:100%; height:100px; background:red; color:white; z-index:99999; font-size:24px; text-align:center; padding-top:30px; font-family:sans-serif; box-shadow: 0 4px 12px rgba(0,0,0,0.5);";
+            div.innerHTML = `
+                <div style="font-weight: bold;">⚠️ PhishShield Warning</div>
+                <div style="font-size: 16px; margin-top: 10px;">This site is ${response.score}% likely to be Phishing! Proceed with caution.</div>
+                <button id="ps-close" style="position: absolute; top: 10px; right: 20px; background: white; color: red; border: none; padding: 5px 10px; cursor: pointer; font-weight: bold;">X</button>
+            `;
+            document.body.appendChild(div);
+            
+            document.getElementById('ps-close').onclick = function() {
+                div.remove();
+            };
+        } else {
+            console.log("PhishShield: Site Safe (" + response.score + "%)");
+        }
+    }
+});
+*****************
+__________________________________________________________________________________________________
+
+Step 2: Install Playwright Environment
+Open your terminal (inside your PhishShield project folder) and run these two commands to install the automation engine and its dedicated Chromium browser:
+
+pip install playwright pandas
+playwright install chromium
+__________________________________________________________________________________________________
+
+Step 3: The Automation Engine (stress_test.py)
+Create a new file in your src/ folder named stress_test.py.
+
+This script will launch a Chrome browser with your extension pre-installed, visit a list of URLs, wait for the hidden <meta> tag to appear, record the result, and calculate the industry metrics (Accuracy, False Positives).
+
+File: src/stress_test.py
+
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+import pandas as pd
+import os
+import time
+
+# --- CONFIGURATION ---
+BASE_DIR = os.getcwd()
+EXTENSION_PATH = os.path.join(BASE_DIR, "extension")
+DATASET_PATH = os.path.join(BASE_DIR, "dataset.csv") 
+REPORT_PATH = os.path.join(BASE_DIR, "v3_stress_test_report.csv")
+
+def run_stress_test():
+    try:
+        df = pd.read_csv(DATASET_PATH)
+        urls = df.to_dict('records')
+    except FileNotFoundError:
+        print(f"Error: Please create a {DATASET_PATH} file.")
+        return
+
+    results = []
+    metrics = {"TP": 0, "FP": 0, "TN": 0, "FN": 0, "Errors": 0}
+
+    print(f"🚀 Starting PhishShield v3.0 Stress Test Engine...")
+    print(f"📦 Loading Extension from: {EXTENSION_PATH}")
+    print(f"🌐 Target Sites: {len(urls)}\n")
+
+    with sync_playwright() as p:
+        browser_args = [
+            f"--disable-extensions-except={EXTENSION_PATH}",
+            f"--load-extension={EXTENSION_PATH}",
+        ]
+        
+        context = p.chromium.launch_persistent_context(
+            user_data_dir=os.path.join(BASE_DIR, "chrome_profile"),
+            headless=False, 
+            args=browser_args,
+            ignore_https_errors=True 
+        )
+        
+        page = context.new_page()
+        
+        # --- THE X-RAY VISION (Bridges Chrome Console to Python Terminal) ---
+        page.on("console", lambda msg: print(f"      [Chrome] {msg.text}"))
+        page.on("pageerror", lambda err: print(f"      [Chrome ERROR] {err}"))
+        
+        print("⏳ Waiting 6 seconds for Background Service Worker to boot & fetch GitLab data...")
+        time.sleep(6) # Increased boot time for fresh profiles
+
+        for i, item in enumerate(urls):
+            url = item['url']
+            expected = str(item['expected_label']).upper()
+            print(f"\n[{i+1}/{len(urls)}] Testing: {url[:60]}...")
+            
+            start_time = time.time()
+            actual_result = "ERROR"
+            score = "0"
+            
+            try:
+                # 1. Navigate to URL 
+                page.goto(url, timeout=15000, wait_until="domcontentloaded")
+                
+                # 2. Wait for content.js to inject our handshake tag (Increased to 8s)
+                element = page.wait_for_selector('#phishshield-result', state='attached', timeout=8000)
+                
+                # 3. Read the injected data
+                if element:
+                    content = element.get_attribute("content")
+                    if ":" in content:
+                        actual_result, score = content.split(":")
+                    else:
+                        actual_result = "PARSE_ERROR"
+                
+                # 4. Calculate Metrics
+                if actual_result == "PHISHING" and expected == "PHISHING": metrics["TP"] += 1
+                elif actual_result == "PHISHING" and expected == "LEGITIMATE": metrics["FP"] += 1
+                elif actual_result == "LEGITIMATE" and expected == "LEGITIMATE": metrics["TN"] += 1
+                elif actual_result == "LEGITIMATE" and expected == "PHISHING": metrics["FN"] += 1
+
+            except PlaywrightTimeoutError:
+                actual_result = "TIMEOUT"
+                metrics["Errors"] += 1
+            except Exception as e:
+                actual_result = f"FAILED: {str(e)[:20]}"
+                metrics["Errors"] += 1
+
+            latency = round((time.time() - start_time) * 1000, 2)
+            
+            icon = "✅" if actual_result == expected else ("⚠️" if "ERROR" in actual_result or "TIMEOUT" in actual_result else "❌")
+            print(f"    {icon} Result: {actual_result} ({score}%) | Expected: {expected} | Time: {latency}ms")
+            
+            results.append({
+                "url": url,
+                "expected": expected,
+                "actual": actual_result,
+                "score": score,
+                "latency_ms": latency
+            })
+
+        context.close()
+
+    # --- SAVE AND PRINT REPORT ---
+    report_df = pd.DataFrame(results)
+    report_df.to_csv(REPORT_PATH, index=False)
+    
+    total_valid = len(urls) - metrics["Errors"]
+    accuracy = ((metrics["TP"] + metrics["TN"]) / total_valid) * 100 if total_valid > 0 else 0
+    fpr = (metrics["FP"] / (metrics["FP"] + metrics["TN"])) * 100 if (metrics["FP"] + metrics["TN"]) > 0 else 0
+
+    print("\n" + "="*50)
+    print("📊 PHISHSHIELD V3.0 STRESS TEST RESULTS")
+    print("="*50)
+    print(f"Total Processed : {len(urls)}")
+    print(f"Errors/Dead URLs: {metrics['Errors']}")
+    print(f"Valid Tests     : {total_valid}")
+    print("-" * 50)
+    print(f"🎯 ACCURACY            : {accuracy:.2f}%")
+    print(f"🚨 FALSE POSITIVE RATE : {fpr:.2f}% (Target: < 1.0%)")
+    print("="*50)
+
+if __name__ == "__main__":
+    run_stress_test()
+__________________________________________________________________________________________________
+
+How to Run Your First Batch
+Create a file named dataset.csv in your root folder.
+
+Add a few test rows like this to verify the engine works:
+
+Code snippet
+url,expected_label
+https://www.google.com,LEGITIMATE
+https://grabify.link/,PHISHING
+https://www.phishtank.com/phish_search.php?verified=u&active=y,LEGITIMATE
+Run the script: python src/stress_test.py
+
+You will see the browser open, fly through the URLs, and spit out an enterprise-grade metric report in the terminal.
+
+--> engine test success now scraping data
+__________________________________________________________________________________________________
+
+To run a legitimate enterprise stress test, we cannot use manually copy-pasted URLs. We need a dynamic script that pulls fresh, active threats and verified clean domains right before the test begins.
+
+Here is the exact architecture for our Dataset Builder:
+
+Phishing Source: The OpenPhish API feed. This provides a constantly updating text file of zero-day phishing links discovered in the last 24 hours.
+
+Legitimate Source: The Majestic Million. This is a standard cybersecurity dataset of the top 1 million most heavily trafficked clean domains on the internet. We will stream this file and securely parse the top 500.
+
+Step 1: The Dataset Builder Script (src/stress_dataset_build.py)
+
+import requests
+import pandas as pd
+import random
+import os
+
+# --- CONFIGURATION ---
+BASE_DIR = os.getcwd()
+DATASET_PATH = os.path.join(BASE_DIR, "dataset.csv")
+
+PHISH_COUNT = 500
+LEGIT_COUNT = 500
+
+# Standard User-Agent to prevent API blocking
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+}
+
+def build_dataset():
+    dataset = []
+    print(f"🛠️ Starting PhishShield Dataset Builder...")
+
+    # --- 1. FETCH PHISHING SITES (OpenPhish) ---
+    print("\n[1/2] Fetching active zero-day phishing URLs from OpenPhish...")
+    try:
+        phish_resp = requests.get("https://openphish.com/feed.txt", headers=HEADERS, timeout=10)
+        phish_resp.raise_for_status()
+        
+        # Parse and clean URLs
+        phish_urls = [line.strip() for line in phish_resp.text.splitlines() if line.strip().startswith("http")]
+        
+        # Randomly sample the requested amount (or take all if less are available)
+        phish_sample = random.sample(phish_urls, min(PHISH_COUNT, len(phish_urls)))
+        
+        for url in phish_sample:
+            dataset.append({"url": url, "expected_label": "PHISHING"})
+            
+        print(f"✅ Successfully loaded {len(phish_sample)} phishing URLs.")
+    except Exception as e:
+        print(f"❌ Failed to fetch OpenPhish feed: {e}")
+
+    # --- 2. FETCH LEGITIMATE SITES (Majestic Million) ---
+    print("\n[2/2] Streaming Top 1M Legitimate Domains from Majestic...")
+    try:
+        legit_urls = []
+        # We use stream=True so we don't load a 100MB CSV into RAM just to get 500 lines
+        with requests.get("http://downloads.majestic.com/majestic_million.csv", stream=True, timeout=10) as r:
+            r.raise_for_status()
+            lines = r.iter_lines()
+            next(lines)  # Skip the CSV header row
+            
+            for _ in range(LEGIT_COUNT):
+                try:
+                    line = next(lines).decode('utf-8')
+                    # Majestic CSV format: GlobalRank,TldRank,Domain,...
+                    domain = line.split(',')[2] 
+                    legit_urls.append(f"https://www.{domain}")
+                except StopIteration:
+                    break
+                    
+        for url in legit_urls:
+            dataset.append({"url": url, "expected_label": "LEGITIMATE"})
+            
+        print(f"✅ Successfully loaded {len(legit_urls)} legitimate URLs.")
+    except Exception as e:
+        print(f"❌ Failed to fetch Majestic Million: {e}")
+
+    # --- 3. SHUFFLE AND SAVE ---
+    if not dataset:
+        print("\n⚠️ Failed to build dataset. Check your internet connection.")
+        return
+
+    print("\n[3/3] Shuffling dataset to randomize test order...")
+    df = pd.DataFrame(dataset)
+    
+    # Shuffle the dataframe so Legit/Phishing are completely mixed
+    df = df.sample(frac=1, random_state=42).reset_index(drop=True) 
+    
+    df.to_csv(DATASET_PATH, index=False)
+    print(f"🎉 Dataset successfully saved to: {DATASET_PATH}")
+    print(f"📊 Total Rows: {len(df)}")
+
+if __name__ == "__main__":
+    build_dataset()
+__________________________________________________________________________________________________
+
+Step 2: Generate the Dataset
+Run the builder script in your terminal:
+
+Bash
+python src/stress_dataset_build.py
+(This should only take about 3 to 5 seconds. It will output a beautifully randomized dataset.csv file with 1,000 rows directly into your root folder).
+
+Step 3: Initiate the 1,000-Site Stress Test
+Now that your ammunition is loaded, fire the engine:
+
+Bash
+python src/stress_test.py
+What to expect during this run:
+
+Time: Processing 1,000 sites will take roughly 45 to 60 minutes.
+
+Timeouts: Expect a significant number of TIMEOUT or ERR_NAME_NOT_RESOLVED errors for the Phishing sites. Phishing domains are frequently taken down by hosting providers within hours of going live. Our script handles this gracefully and will exclude dead sites from the final Accuracy calculation.
+
+The Goal: You want to see the False Positive Rate at the very end stay below 1.0%.
+
+You can minimize the Chrome window that opens and let it run quietly in the background. Share the final console report once the test completes!
+__________________________________________________________________________________________________
+

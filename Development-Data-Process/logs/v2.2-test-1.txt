@@ -1,0 +1,122 @@
+logs on refresh:
+
+[Living Whitelist] Checking for updates from GitLab...
+background.js:22 [Local Fallback] Loaded 950 domains from storage.
+background.js:28 [Local Fallback] Loaded 19 hashes from storage.
+background.js:47 [Living Whitelist] Success! Updated with 950 domains.
+background.js:55 [Phase 3] Checking for visual hash updates...
+background.js:63 [Phase 3] Success! Updated with 19 visual hashes.
+
+logs on legit test:
+
+https://web.whatsapp.com/:
+[Tab 1709706423] ML Raw Score: 0.88
+background.js:213 [Living Whitelist] Trusted Domain (web.whatsapp.com). Score forced to 0.
+background.js:222 [Tab 1709706423] Final Decision: LEGITIMATE (0%)
+
+https://openai.com/research/:
+[Tab 1709706423] ML Raw Score: 0.26
+background.js:213 [Living Whitelist] Trusted Domain (openai.com). Score forced to 0.
+background.js:222 [Tab 1709706423] Final Decision: LEGITIMATE (0%)
+
+https://www.phishtank.com/phish_search.php?verified=u&active=y:
+[Tab 1709706423] ML Raw Score: 0.17
+background.js:156 [Phase 2] NLP Score added: +0.15
+background.js:165 [Phase 3] Ambiguous score + Password field. Triggering Visual Scan...
+background.js:177 [Phase 3] Live Viewport Hash: 00007fffffffffff
+background.js:222 [Tab 1709706423] Final Decision: LEGITIMATE (32%)
+
+https://www.facebook.com/login.php:
+[Tab 1709706423] ML Raw Score: 0.17
+background.js:213 [Living Whitelist] Trusted Domain (www.facebook.com). Score forced to 0.
+background.js:222 [Tab 1709706423] Final Decision: LEGITIMATE (0%)
+
+https://grabify.link/:
+[Tab 1709706434] ML Raw Score: 0.23
+background.js:144 Heuristic: Risky TLD (+0.30)
+background.js:222 [Tab 1709706434] Final Decision: PHISHING (53%)
+
+https://www.youtube.com/:
+[Tab 1709706438] ML Raw Score: 0.26
+background.js:213 [Living Whitelist] Trusted Domain (www.youtube.com). Score forced to 0.
+background.js:222 [Tab 1709706438] Final Decision: LEGITIMATE (0%)
+
+https://bitly.com/:
+[Tab 1709706442] ML Raw Score: 0.15
+background.js:156 [Phase 2] NLP Score added: +0.15
+background.js:222 [Tab 1709706442] Final Decision: LEGITIMATE (30%)
+
+https://bitly.com/a/sign_up?rd=%2Fdefault%2Flinks%3Fhook_url%3Dhttps%253A%252F%252Fwww.youtube.com%252F%26hook_type%3Dbitlinks%26free_hook%3Dtrue%26hook_backhalf%3Dnull:
+[Tab 1709706442] ML Raw Score: 0.81
+background.js:222 [Tab 1709706442] Final Decision: PHISHING (81%)
+
+https://t.ly/:
+[Tab 1709706442] ML Raw Score: 0.23
+background.js:144 Heuristic: Risky TLD (+0.30)
+background.js:222 [Tab 1709706442] Final Decision: PHISHING (53%)
+
+https://z-lolz.net/:
+[Tab 1709706447] ML Raw Score: 0.49
+background.js:156 [Phase 2] NLP Score added: +0.15
+background.js:165 [Phase 3] Ambiguous score + Password field. Triggering Visual Scan...
+background.js:177 [Phase 3] Live Viewport Hash: 00000008000000ff
+background.js:186 [Phase 3] CLONE DETECTED! Looks like github.com but URL is z-lolz.net. Overriding to Block.
+background.js:222 [Tab 1709706447] Final Decision: PHISHING (100%)
+after login,
+[Tab 1709706447] ML Raw Score: 0.49
+background.js:156 [Phase 2] NLP Score added: +0.15
+background.js:222 [Tab 1709706447] Final Decision: PHISHING (64%)
+
+https://temp-mail.org/en/:
+[Tab 1709706472] ML Raw Score: 0.40
+background.js:165 [Phase 3] Ambiguous score + Password field. Triggering Visual Scan...
+background.js:177 [Phase 3] Live Viewport Hash: 0000000000ffc3ff
+background.js:222 [Tab 1709706472] Final Decision: LEGITIMATE (40%)
+
+logs on phishing test:
+
+https://mohre-pay.info/:
+[Tab 1709706426] ML Raw Score: 0.70
+background.js:144 Heuristic: Risky TLD (+0.30)
+background.js:222 [Tab 1709706426] Final Decision: PHISHING (100%)
+
+https://65615v.com:51366/#/home:
+[Tab 1709706426] ML Raw Score: 0.29
+background.js:136 Heuristic: High Entropy (+0.45)
+background.js:222 [Tab 1709706426] Final Decision: PHISHING (74%)
+
+https://ptatioa.cfd/shniukra/kRUWxuH:
+[Tab 1709706432] ML Raw Score: 0.23
+background.js:144 Heuristic: Risky TLD (+0.30)
+background.js:222 [Tab 1709706432] Final Decision: PHISHING (53%)
+
+https://taniska.live/?f=aXN0JmFtcDtpPTI3OTk0NA==:
+background.js:132 [Tab 1709706448] ML Raw Score: 0.22
+background.js:144 Heuristic: Risky TLD (+0.30)
+background.js:222 [Tab 1709706448] Final Decision: PHISHING (52%)
+
+using z-lolz phishing link:
+
+gmail: https://rotaryjointsindia.com/MTAmYW1wO2k9Mjc5OTQ0
+[Tab 1709706454] ML Raw Score: 0.15
+background.js:222 [Tab 1709706454] Final Decision: LEGITIMATE (15%)
+
+server1 phishing links: https://rotaryjointsindia.com/YWxnZiZhbXA7aT0yNzk5NDQ=
+[Tab 1709706462] ML Raw Score: 0.15
+background.js:222 [Tab 1709706462] Final Decision: LEGITIMATE (15%)
+
+server 2: https://taniska.live/?f=eHBybiZhbXA7aT0yNzk5NDQ=
+[Tab 1709706468] ML Raw Score: 0.22
+background.js:144 Heuristic: Risky TLD (+0.30)
+background.js:222 [Tab 1709706468] Final Decision: PHISHING (52%)
+
+using smikta.online phishing links:
+Instagram: https://predict-hydrocodone-society-downloadable.trycloudflare.com/NmQxYWY1Nzg2YmM4YTE3YzcwMjRjMw==/?type=ig-en&orders=780866140&auth=MmE3YTVlNTIzYWNjMjliNDUxNTY4ZA==
+[Tab 1709706474] ML Raw Score: 0.97
+background.js:140 Heuristic: Hyphen Attack (+0.25)
+background.js:222 [Tab 1709706474] Final Decision: PHISHING (100%)
+
+gmail: https://predict-hydrocodone-society-downloadable.trycloudflare.com/NmQxYWY1Nzg2YmM4YTE3YzcwMjRjMw==/?type=xgm-enq&orders=780866140&auth=MmE3YTVlNTIzYWNjMjliNDUxNTY4ZA==
+[Tab 1709706475] ML Raw Score: 0.97
+background.js:140 Heuristic: Hyphen Attack (+0.25)
+background.js:222 [Tab 1709706475] Final Decision: PHISHING (100%)

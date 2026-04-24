@@ -1,0 +1,175 @@
+1. Latency Measurement (The Millisecond Test)
+To prove that PhishShield operates within industry standards (Layer 1/2 < 50ms, Layer 3 < 500ms), we must inject precise performance trackers into background.js.
+
+Action: Update the predict_features listener in extension/background.js to include performance.now() markers.
+
+Find your existing chrome.runtime.onMessage.addListener block and inject the ⏱️ timing lines exactly as shown below:
+_________________________________________________________________________________________
+
+chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
+    if (request.action === "predict_features") {
+        (async () => {
+            try {
+                // ⏱️ START TOTAL TIMER
+                const tStart = performance.now();
+
+                const features = request.features;
+                let urlObj = new URL(request.url);
+                let hostname = urlObj.hostname;
+                let cleanHostname = hostname.replace("www.", "");
+                
+                // --- LAYER 2: ML & Heuristics ---
+                let rawScores = scoreModel(features);
+                let phishScore = Array.isArray(rawScores) ? rawScores[1] : rawScores;
+                
+                if (features[9] >= 4) phishScore += 0.45;
+                if (features[7] > 1) phishScore += 0.25;
+                if (features[10] === 1) phishScore += 0.30;
+                const dangerousWords = ['login', 'verify', 'account', 'update', 'wallet', 'vault', 'secure', 'confirm', 'banking'];
+                if (dangerousWords.some(w => hostname.toLowerCase().includes(w))) phishScore += 0.20;
+
+                const nlpScore = request.nlpScore || 0; 
+                if (nlpScore > 0) phishScore += nlpScore;
+
+                phishScore = Math.min(phishScore, 1.0);
+
+                // ⏱️ LOG LAYER 2 TIME
+                const tLayer2 = performance.now();
+                console.log(`⏱️ Layer 2 (ML+NLP) executed in: ${(tLayer2 - tStart).toFixed(2)} ms`);
+
+                // --- LAYER 3: Visual Scanner ---
+                if (phishScore >= 0.10 && phishScore < 0.70 && request.hasPassword && Object.keys(cachedVisualHashes).length > 0) {
+                    // ⏱️ START VISUAL TIMER
+                    const tVisStart = performance.now();
+                    
+                    try {
+                        const dataUrl = await chrome.tabs.captureVisibleTab(sender.tab.windowId, {format: 'jpeg', quality: 10});
+                        await setupOffscreenDocument('offscreen.html');
+                        
+                        const response = await chrome.runtime.sendMessage({
+                            target: 'offscreen',
+                            action: 'hash_image',
+                            dataUrl: dataUrl
+                        });
+                        
+                        const liveHash = response.hash;
+                        let visualMatchFound = false;
+                        let matchedTargetDomain = "";
+
+                        for (const [targetDomain, hashData] of Object.entries(cachedVisualHashes)) {
+                            const hashVariants = Array.isArray(hashData) ? hashData : [hashData];
+                            for (const targetHash of hashVariants) {
+                                const distance = getHammingDistance(liveHash, targetHash);
+                                if (distance <= 5) {
+                                    visualMatchFound = true;
+                                    matchedTargetDomain = targetDomain;
+                                    break; 
+                                }
+                            }
+                            if (visualMatchFound) break; 
+                        }
+
+                        if (visualMatchFound) {
+                            if (!cleanHostname.endsWith(matchedTargetDomain)) {
+                                phishScore = 1.0; 
+                            } else {
+                                phishScore = 0.0;
+                            }
+                        }
+
+                        // ⏱️ LOG LAYER 3 TIME
+                        const tVisEnd = performance.now();
+                        console.log(`⏱️ Layer 3 (Visual Scan) executed in: ${(tVisEnd - tVisStart).toFixed(2)} ms`);
+
+                    } catch (visualError) {
+                        console.error("Visual scan failed", visualError);
+                    }
+                }
+
+                // --- LAYER 1: Whitelist Override ---
+                let isTrusted = false;
+                if (cachedWhitelist.has(cleanHostname)) {
+                    isTrusted = true;
+                } else {
+                    for (let trusted of cachedWhitelist) {
+                        if (cleanHostname.endsWith('.' + trusted)) {
+                            isTrusted = true;
+                            break;
+                        }
+                    }
+                }
+                if (isTrusted) phishScore = 0;
+
+                // --- FINAL LOGGING ---
+                const isPhishing = phishScore > 0.50;
+                const resultText = isPhishing ? "PHISHING" : "LEGITIMATE";
+                const finalScorePercent = (phishScore * 100).toFixed(0);
+
+                if (sender.tab && sender.tab.id) {
+                    chrome.storage.local.set({
+                        [sender.tab.id.toString()]: { result: resultText, score: finalScorePercent, url: request.url }
+                    });
+                }
+                
+                // ⏱️ LOG TOTAL TIME
+                const tEnd = performance.now();
+                console.log(`⏱️ Total PhishShield Pipeline: ${(tEnd - tStart).toFixed(2)} ms`);
+
+                sendResponse({ result: resultText, score: finalScorePercent });
+
+            } catch (e) {
+                sendResponse({ error: e.message });
+            }
+        })();
+        return true; 
+    }
+});
+
+_________________________________________________________________________________________
+
+2. Memory Leak Profiling (The "Tab Spam" Stress Test)
+The highest risk for memory leaks in this extension is the Offscreen Document failing to release the image <canvas> data after a visual scan. We must simulate a user browsing heavily.
+
+Execution Steps:
+
+Open chrome://extensions/.
+
+Click Inspect views: service worker under PhishShield.
+
+In the DevTools window that opens, navigate to the Memory tab.
+
+Select Heap snapshot and click Take snapshot. (This is your baseline memory, usually around 2MB - 5MB).
+
+Leave this DevTools window open.
+
+Open a new standard Chrome tab and press F12 to open a different DevTools console.
+
+Paste and run the following automated stress-test script. It will rapidly open and close 20 tabs containing password fields to force Phase 3 to execute repeatedly.
+_________________________________________________________________________________________
+
+// Stress Test Script - Run in a standard Chrome Tab console
+(async function runStressTest() {
+    console.log("Starting PhishShield Stress Test...");
+    for (let i = 0; i < 20; i++) {
+        // Using a PhishTank URL or a dummy login page
+        let w = window.open('https://www.phishtank.com/phish_search.php?verified=u&active=y', '_blank');
+        
+        // Wait 3 seconds for the page to load and PhishShield to scan
+        await new Promise(r => setTimeout(r, 3000)); 
+        
+        w.close();
+        console.log(`Tab ${i+1}/20 processed and closed.`);
+    }
+    console.log("Stress Test Complete. Check Service Worker Memory.");
+})();
+_________________________________________________________________________________________
+
+Return to the Service Worker DevTools -> Memory tab.
+
+Take a second Heap snapshot.
+
+Compare the size of Snapshot 1 to Snapshot 2.
+
+If Snapshot 2 is significantly larger (e.g., jumping from 5MB to 50MB+) and does not shrink when you click the garbage collection icon (the trash can), the Offscreen Document has a memory leak. If it stays relatively flat, the architecture is stable.
+_________________________________________________________________________________________
+

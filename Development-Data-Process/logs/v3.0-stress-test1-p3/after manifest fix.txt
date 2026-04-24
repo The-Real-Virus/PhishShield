@@ -1,0 +1,30 @@
+⏱️ Layer 2 (ML+NLP) executed in: 1.00 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 135.10 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 137.00 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.10 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 57.50 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 58.50 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.30 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 56.60 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 57.70 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.60 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 63.70 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 65.00 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.10 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 58.40 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 59.10 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 60.40 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 61.20 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.20 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 53.60 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 54.80 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.10 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 57.90 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 58.70 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.30 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 69.90 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 70.90 ms
+background.js:147 ⏱️ Layer 2 (ML+NLP) executed in: 0.40 ms
+background.js:191 ⏱️ Layer 3 (Visual Scan) executed in: 62.80 ms
+background.js:225 ⏱️ Total PhishShield Pipeline: 64.00 ms

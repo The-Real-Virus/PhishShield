@@ -1,0 +1,32 @@
+{
+  "manifest_version": 3,
+  "name": "PhishShield",
+  "version": "3.0",
+  "description": "Real-time AI Phishing Detection",
+  "permissions": [
+    "tabs", 
+    "scripting", 
+    "storage", 
+    "alarms",
+    "offscreen"
+  ],
+  "host_permissions": [
+    "https://gitlab.com/*",
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": ["feature_extractor.js", "content.js"]
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html"
+  },
+  "icons": {
+      "128": "assets/logo.png"
+  }
+}

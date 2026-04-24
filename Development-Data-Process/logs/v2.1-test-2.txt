@@ -1,0 +1,41 @@
+file:///E:/FYP/zTemp/v2.1-nlp-test-page.html
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Phishing Test Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            padding: 50px;
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+    <h1>Account Suspension Notice</h1>
+    <p>Your account is suspended. Click here to verify your password immediately.</p>
+    <a href="https://fake-phishing-link.com/verify">Verify Now</a>
+</body>
+</html>
+
+-----------------------------------------------------------------------------------------------------
+
+[Living Whitelist] Checking for updates from GitLab...
+background.js:35 [Living Whitelist] Success! Updated with 950 domains.
+background.js:71 [Tab 1709700604] ML Raw Score: 0.23
+background.js:92 Heuristic: Risky TLD (+0.30)
+background.js:109 [Phase 2] NLP Score added: +0.55
+background.js:151 [Tab 1709700604] Final Decision: PHISHING (100%)
+

@@ -1,0 +1,39 @@
+// Stress Test Script - Run in a standard Chrome Tab console
+(async function runStressTest() {
+    console.log("Starting PhishShield Stress Test...");
+    for (let i = 0; i < 20; i++) {
+        // Using a PhishTank URL or a dummy login page
+        let w = window.open('https://www.phishtank.com/phish_search.php?verified=u&active=y', '_blank');
+        
+        // Wait 3 seconds for the page to load and PhishShield to scan
+        await new Promise(r => setTimeout(r, 3000)); 
+        
+        w.close();
+        console.log(`Tab ${i+1}/20 processed and closed.`);
+    }
+    console.log("Stress Test Complete. Check Service Worker Memory.");
+})();
+VM74:3 Starting PhishShield Stress Test...
+Promise {<pending>}
+VM74:12 Tab 1/20 processed and closed.
+VM74:12 Tab 2/20 processed and closed.
+VM74:12 Tab 3/20 processed and closed.
+VM74:12 Tab 4/20 processed and closed.
+VM74:12 Tab 5/20 processed and closed.
+VM74:12 Tab 6/20 processed and closed.
+VM74:12 Tab 7/20 processed and closed.
+VM74:12 Tab 8/20 processed and closed.
+VM74:12 Tab 9/20 processed and closed.
+VM74:12 Tab 10/20 processed and closed.
+lockdown-install.js:1 SES Removing unpermitted intrinsics
+VM74:12 Tab 11/20 processed and closed.
+VM74:12 Tab 12/20 processed and closed.
+VM74:12 Tab 13/20 processed and closed.
+VM74:12 Tab 14/20 processed and closed.
+VM74:12 Tab 15/20 processed and closed.
+VM74:12 Tab 16/20 processed and closed.
+VM74:12 Tab 17/20 processed and closed.
+VM74:12 Tab 18/20 processed and closed.
+VM74:12 Tab 19/20 processed and closed.
+VM74:12 Tab 20/20 processed and closed.
+VM74:14 Stress Test Complete. Check Service Worker Memory.

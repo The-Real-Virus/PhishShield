@@ -1,0 +1,159 @@
+(async function runPercentileTest() {
+    // Array of 100 diverse sites (News, E-commerce, Blogs, Web Apps)
+    const testSites = [
+        "https://www.wikipedia.org", "https://www.amazon.com", "https://www.apple.com", "https://www.nytimes.com", "https://www.reddit.com",
+        "https://www.netflix.com", "https://www.twitch.tv", "https://www.ebay.com", "https://www.imdb.com", "https://www.cnn.com",
+        "https://www.espn.com", "https://www.weather.com", "https://www.craigslist.org", "https://www.zillow.com", "https://www.walmart.com",
+        "https://www.chase.com", "https://www.bankofamerica.com", "https://www.wellsfargo.com", "https://www.capitalone.com", "https://www.paypal.com",
+        "https://www.github.com", "https://www.stackoverflow.com", "https://www.linkedin.com", "https://www.microsoft.com", "https://www.adobe.com",
+        "https://www.salesforce.com", "https://www.zoom.us", "https://www.slack.com", "https://www.atlassian.com", "https://www.dropbox.com",
+        "https://www.wordpress.com", "https://www.medium.com", "https://www.tumblr.com", "https://www.blogger.com", "https://www.quora.com",
+        "https://www.pinterest.com", "https://www.etsy.com", "https://www.target.com", "https://www.homedepot.com", "https://www.bestbuy.com",
+        "https://www.nytimes.com", "https://www.washingtonpost.com", "https://www.foxnews.com", "https://www.usatoday.com", "https://www.wsj.com",
+        "https://www.hulu.com", "https://www.disneyplus.com", "https://www.spotify.com", "https://www.pandora.com", "https://www.soundcloud.com",
+        "https://www.airbnb.com", "https://www.booking.com", "https://www.expedia.com", "https://www.tripadvisor.com", "https://www.kayak.com",
+        "https://www.uber.com", "https://www.lyft.com", "https://www.doordash.com", "https://www.ubereats.com", "https://www.grubhub.com",
+        "https://www.craigslist.org", "https://www.indeed.com", "https://www.glassdoor.com", "https://www.monster.com", "https://www.ziprecruiter.com",
+        "https://www.webmd.com", "https://www.mayoclinic.org", "https://www.nih.gov", "https://www.cdc.gov", "https://www.who.int",
+        "https://www.nasa.gov", "https://www.nationalgeographic.com", "https://www.discovery.com", "https://www.history.com", "https://www.smithsonianmag.com",
+        "https://www.nike.com", "https://www.adidas.com", "https://www.underarmour.com", "https://www.puma.com", "https://www.reebok.com",
+        "https://www.gamestop.com", "https://www.ign.com", "https://www.gamespot.com", "https://www.polygon.com", "https://www.kotaku.com",
+        "https://www.bbc.com", "https://www.aljazeera.com", "https://www.reuters.com", "https://www.apnews.com", "https://www.bloomberg.com",
+        "https://www.forbes.com", "https://www.fortune.com", "https://www.businessinsider.com", "https://www.cnbc.com", "https://www.ft.com",
+        "https://www.harvard.edu", "https://www.mit.edu", "https://www.stanford.edu", "https://www.ox.ac.uk", "https://www.cam.ac.uk", "https://www.phishtank.com/phish_search.php?verified=u&active=y",
+        "https://qatarpost.vip/qa", "https://seiyo.net/services?sub_id_23=15", "http://settlements.tbisprivate.com", "http://gotyme.noonvip.com/#/",
+        "https://93371.xyz/", "https://806888.co/", "https://m.webs-jinsha.com/", "https://dnapro.co.za/tmp_vxsigy/", "https://lamgiau.net/lamg?sub_id_23=13",
+        "http://marinasdsg.one", "https://a2aguru.com/K2bLZBnO.html", "https://prinvot.com", "https://youroceanlife.com/wp-includes/ID3/"
+    ];
+
+    console.log(`Starting Percentile Latency Test (${testSites.length} sites)...`);
+    
+    for (let i = 0; i < testSites.length; i++) {
+        let w = window.open(testSites[i], '_blank');
+        
+        // Wait 4 seconds for heavy DOMs to build and extension to fire
+        await new Promise(r => setTimeout(r, 4000)); 
+        
+        w.close();
+        console.log(`[${i+1}/${testSites.length}] Processed: ${testSites[i]}`);
+    }
+    console.log("Test Complete! Go to your Service Worker console and run printPercentiles()");
+})();
+VM66:29 Starting Percentile Latency Test (114 sites)...
+Promise {<pending>}
+VM66:38 [1/114] Processed: https://www.wikipedia.org
+VM66:38 [2/114] Processed: https://www.amazon.com
+VM66:38 [3/114] Processed: https://www.apple.com
+VM66:38 [4/114] Processed: https://www.nytimes.com
+VM66:38 [5/114] Processed: https://www.reddit.com
+VM66:38 [6/114] Processed: https://www.netflix.com
+VM66:38 [7/114] Processed: https://www.twitch.tv
+VM66:38 [8/114] Processed: https://www.ebay.com
+VM66:38 [9/114] Processed: https://www.imdb.com
+VM66:38 [10/114] Processed: https://www.cnn.com
+VM66:38 [11/114] Processed: https://www.espn.com
+VM66:38 [12/114] Processed: https://www.weather.com
+VM66:38 [13/114] Processed: https://www.craigslist.org
+VM66:38 [14/114] Processed: https://www.zillow.com
+VM66:38 [15/114] Processed: https://www.walmart.com
+VM66:38 [16/114] Processed: https://www.chase.com
+VM66:38 [17/114] Processed: https://www.bankofamerica.com
+VM66:38 [18/114] Processed: https://www.wellsfargo.com
+VM66:38 [19/114] Processed: https://www.capitalone.com
+VM66:38 [20/114] Processed: https://www.paypal.com
+VM66:38 [21/114] Processed: https://www.github.com
+VM66:38 [22/114] Processed: https://www.stackoverflow.com
+VM66:38 [23/114] Processed: https://www.linkedin.com
+VM66:38 [24/114] Processed: https://www.microsoft.com
+VM66:38 [25/114] Processed: https://www.adobe.com
+VM66:38 [26/114] Processed: https://www.salesforce.com
+VM66:38 [27/114] Processed: https://www.zoom.us
+VM66:38 [28/114] Processed: https://www.slack.com
+VM66:38 [29/114] Processed: https://www.atlassian.com
+VM66:38 [30/114] Processed: https://www.dropbox.com
+VM66:38 [31/114] Processed: https://www.wordpress.com
+VM66:38 [32/114] Processed: https://www.medium.com
+VM66:38 [33/114] Processed: https://www.tumblr.com
+VM66:38 [34/114] Processed: https://www.blogger.com
+VM66:38 [35/114] Processed: https://www.quora.com
+VM66:38 [36/114] Processed: https://www.pinterest.com
+VM66:38 [37/114] Processed: https://www.etsy.com
+VM66:38 [38/114] Processed: https://www.target.com
+VM66:38 [39/114] Processed: https://www.homedepot.com
+lockdown-install.js:1 SES Removing unpermitted intrinsics
+VM66:38 [40/114] Processed: https://www.bestbuy.com
+VM66:38 [41/114] Processed: https://www.nytimes.com
+VM66:38 [42/114] Processed: https://www.washingtonpost.com
+VM66:38 [43/114] Processed: https://www.foxnews.com
+VM66:38 [44/114] Processed: https://www.usatoday.com
+VM66:38 [45/114] Processed: https://www.wsj.com
+VM66:38 [46/114] Processed: https://www.hulu.com
+VM66:38 [47/114] Processed: https://www.disneyplus.com
+VM66:38 [48/114] Processed: https://www.spotify.com
+VM66:38 [49/114] Processed: https://www.pandora.com
+VM66:38 [50/114] Processed: https://www.soundcloud.com
+VM66:38 [51/114] Processed: https://www.airbnb.com
+VM66:38 [52/114] Processed: https://www.booking.com
+VM66:38 [53/114] Processed: https://www.expedia.com
+VM66:38 [54/114] Processed: https://www.tripadvisor.com
+VM66:38 [55/114] Processed: https://www.kayak.com
+VM66:38 [56/114] Processed: https://www.uber.com
+VM66:38 [57/114] Processed: https://www.lyft.com
+VM66:38 [58/114] Processed: https://www.doordash.com
+VM66:38 [59/114] Processed: https://www.ubereats.com
+VM66:38 [60/114] Processed: https://www.grubhub.com
+VM66:38 [61/114] Processed: https://www.craigslist.org
+VM66:38 [62/114] Processed: https://www.indeed.com
+VM66:38 [63/114] Processed: https://www.glassdoor.com
+VM66:38 [64/114] Processed: https://www.monster.com
+VM66:38 [65/114] Processed: https://www.ziprecruiter.com
+VM66:38 [66/114] Processed: https://www.webmd.com
+VM66:38 [67/114] Processed: https://www.mayoclinic.org
+VM66:38 [68/114] Processed: https://www.nih.gov
+VM66:38 [69/114] Processed: https://www.cdc.gov
+VM66:38 [70/114] Processed: https://www.who.int
+VM66:38 [71/114] Processed: https://www.nasa.gov
+VM66:38 [72/114] Processed: https://www.nationalgeographic.com
+VM66:38 [73/114] Processed: https://www.discovery.com
+VM66:38 [74/114] Processed: https://www.history.com
+VM66:38 [75/114] Processed: https://www.smithsonianmag.com
+VM66:38 [76/114] Processed: https://www.nike.com
+VM66:38 [77/114] Processed: https://www.adidas.com
+VM66:38 [78/114] Processed: https://www.underarmour.com
+VM66:38 [79/114] Processed: https://www.puma.com
+VM66:38 [80/114] Processed: https://www.reebok.com
+VM66:38 [81/114] Processed: https://www.gamestop.com
+VM66:38 [82/114] Processed: https://www.ign.com
+VM66:38 [83/114] Processed: https://www.gamespot.com
+VM66:38 [84/114] Processed: https://www.polygon.com
+VM66:38 [85/114] Processed: https://www.kotaku.com
+VM66:38 [86/114] Processed: https://www.bbc.com
+VM66:38 [87/114] Processed: https://www.aljazeera.com
+VM66:38 [88/114] Processed: https://www.reuters.com
+VM66:38 [89/114] Processed: https://www.apnews.com
+VM66:38 [90/114] Processed: https://www.bloomberg.com
+VM66:38 [91/114] Processed: https://www.forbes.com
+VM66:38 [92/114] Processed: https://www.fortune.com
+VM66:38 [93/114] Processed: https://www.businessinsider.com
+VM66:38 [94/114] Processed: https://www.cnbc.com
+VM66:38 [95/114] Processed: https://www.ft.com
+VM66:38 [96/114] Processed: https://www.harvard.edu
+VM66:38 [97/114] Processed: https://www.mit.edu
+VM66:38 [98/114] Processed: https://www.stanford.edu
+VM66:38 [99/114] Processed: https://www.ox.ac.uk
+VM66:38 [100/114] Processed: https://www.cam.ac.uk
+VM66:38 [101/114] Processed: https://www.phishtank.com/phish_search.php?verified=u&active=y
+VM66:38 [102/114] Processed: https://qatarpost.vip/qa
+VM66:38 [103/114] Processed: https://seiyo.net/services?sub_id_23=15
+VM66:38 [104/114] Processed: http://settlements.tbisprivate.com
+VM66:38 [105/114] Processed: http://gotyme.noonvip.com/#/
+VM66:38 [106/114] Processed: https://93371.xyz/
+VM66:38 [107/114] Processed: https://806888.co/
+VM66:38 [108/114] Processed: https://m.webs-jinsha.com/
+VM66:38 [109/114] Processed: https://dnapro.co.za/tmp_vxsigy/
+VM66:38 [110/114] Processed: https://lamgiau.net/lamg?sub_id_23=13
+VM66:38 [111/114] Processed: http://marinasdsg.one
+VM66:38 [112/114] Processed: https://a2aguru.com/K2bLZBnO.html
+VM66:38 [113/114] Processed: https://prinvot.com
+VM66:38 [114/114] Processed: https://youroceanlife.com/wp-includes/ID3/
+VM66:40 Test Complete! Go to your Service Worker console and run printPercentiles()

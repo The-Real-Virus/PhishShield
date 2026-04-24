@@ -1,0 +1,106 @@
+PS E:\FYP\PhishShield> python src/test_automation.py
+Loading model from E:\FYP\PhishShield\models\phishshield_rf.joblib...
+
+URL                                           | RAW   | FINAL | RESULT     | LOGIC USED
+-----------------------------------------------------------------------------------------------------------------------------
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.google.com                        | 0.17  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://web.whatsapp.com                      | 0.88  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.amazon.com                        | 0.17  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://grok.com                              | 0.17  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://stackoverflow.com                     | 0.18  | 0.00  | LEGIT      | NLP_SCAN(+0.55), WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://github.com                            | 0.17  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.instagram.com                     | 0.17  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.instagram.com/accounts/login/?hl= | 0.17  | 0.00  | LEGIT      | INTENT_KEYWORD, WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://gemini.google.com/app?                | 0.88  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.netflix.com/browse                | 0.35  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://openai.com/research/                  | 0.17  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.youtube.com/                      | 0.26  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.facebook.com/login.php            | 0.17  | 0.00  | LEGIT      | INTENT_KEYWORD, WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.facebook.com/                     | 0.17  | 0.00  | LEGIT      | WHITELISTED
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+http://82273v.com                             | 0.29  | 0.74  | PHISHING   | ENTROPY
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+http://trezor.la                              | 0.23  | 0.53  | PHISHING   | RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://secure-update-paypal-login.com        | 0.65  | 1.00  | PHISHING   | STRUCTURE, INTENT_KEYWORD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+http://testsafebrowsing.appspot.com/s/phishin | 0.86  | 0.86  | PHISHING   | ML_ONLY
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://allegro.prytwanite5.sbs               | 0.73  | 1.00  | PHISHING   | RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://ma.usa.codify.inc/                    | 0.88  | 1.00  | PHISHING   | RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://www.web3vaultencrypt.com/wallets      | 0.33  | 0.53  | PHISHING   | INTENT_KEYWORD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+http://testsafebrowsing.appspot.com/s/phishin | 0.86  | 0.86  | PHISHING   | ML_ONLY
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+http://allegro.15s195j181-1s.sbs              | 0.97  | 1.00  | PHISHING   | ENTROPY, RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://kra4.pro/                             | 0.22  | 0.52  | PHISHING   | RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://allegro-lokalnie.oi383y3y.cfd         | 0.96  | 1.00  | PHISHING   | ENTROPY, RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://iconeflow.com/                        | 0.17  | 0.17  | LEGIT      | ML_ONLY
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://promoairfryer.online/                 | 0.23  | 0.53  | PHISHING   | RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://0xpr.top/usdc/?claim.circle.com       | 0.22  | 0.52  | PHISHING   | RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+http://bigtrout300.lol                        | 0.22  | 0.77  | PHISHING   | RISKY_TLD, NLP_SCAN(+0.25)
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://web3chatbot.com/                      | 0.30  | 0.30  | LEGIT      | ML_ONLY
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+http://www.alturasbuga.com/9muljx             | 0.17  | 0.17  | LEGIT      | ML_ONLY
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://vivasorteoficial.com.ua/              | 0.60  | 0.90  | PHISHING   | RISKY_TLD
+C:\Users\smsbo\AppData\Local\Programs\Python\Python313\Lib\site-packages\sklearn\utils\validation.py:2749: UserWarning: X does not have valid feature names, but RandomForestClassifier was fitted with feature names
+  warnings.warn(
+https://vivasortecapitalizacao.com/           | 0.17  | 0.17  | LEGIT      | ML_ONLY
+-----------------------------------------------------------------------------------------------------------------------------
+PS E:\FYP\PhishShield> 
