@@ -46,7 +46,7 @@
 
 # Banner & Logo
 1) Banner.  
-     ![step1](images/Banner.jpg)
+     <img src="./images/Banner.jpg" width="400" />
 
 2) Logo 1.  
      ![step1](images/Logo1.png)
