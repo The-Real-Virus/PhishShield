@@ -8,7 +8,7 @@
 
 # How to Use ?
 1) Open Chrome and Click on Extention.  
-     ![step1](images/1.png?v=1)
+     ![step1](images/1.png)
 
 2) Go to manage extention.  
      ![step1](images/2.png)
