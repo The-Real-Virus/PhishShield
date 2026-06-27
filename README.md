@@ -1,4 +1,4 @@
-- Research Paper of This Project --> [PhishShield](https://github.com/The-Real-Virus/Research-Papers)  
+- Research Paper of This Project --> [PhishShield](https://dx.doi.org/10.2139/ssrn.6981428)  
 
 # 🛡️PhishShield🛡️  
 
