@@ -60,7 +60,7 @@ Copyright (c) 2026 The-Real-Virus
 For more details, see the [LICENSE](LICENSE) file.  
 
 # Disclaimer ⚠️
-**Educational, Research & Informational Purposes Only:** This extension is provided as a tool to assist in identifying potential phishing threats. It is not an absolute guarantee of security. 
+**Educational, Research & Informational Purposes Only:** This extension is provided as a tool/Prototype to assist in identifying potential phishing threats. It is not an absolute guarantee of security. 
 
 **No Liability:** While we strive for accuracy, phishing techniques evolve rapidly. The developers assume no responsibility for:
 *   Any damages or data loss resulting from undetected phishing sites.
