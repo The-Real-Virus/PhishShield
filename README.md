@@ -1,10 +1,10 @@
-- Research Paper of This Project --> [PhishShield](https://dx.doi.org/10.2139/ssrn.6981428)  
+- Research Paper of This Project (Pre-Print) --> [PhishShield](https://dx.doi.org/10.2139/ssrn.6981428)  
 
 # 🛡️PhishShield🛡️  
 
 > [!IMPORTANT]
-> This is FYP a Research based project along with a research paper and this product.  
-> The Journey was quite long and complex, So the folder "Development-Data-Process" contains only & all the necessary material used to develop V3.0.
+> This is a Research based project, with a research paper (Currently Not Published) and With this Prototype.  
+> The folder "Development-Data-Process" contains all the necessary material used to develop V3.0. Initial Test/Trial Data was not Preserved or Archived.
 
 # How to Use ?
 1) Open Chrome and Click on Extention.  
