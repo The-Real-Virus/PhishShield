@@ -1,0 +1,10 @@
+1. open chrome blank page , press F12 or inspect to open dev tools , go to console tab.
+
+2. copy json whitelist and paste in console (if warning then first type allow pasting and press enter then clear console) press enter
+
+3. paste the command,
+copy(JSON.stringify({ domains: Array.from(TRUSTED_DOMAINS_SET) }));
+
+and press enter.
+
+4. now it is copied to ur clipboard, do nothing . just press CTRL+V where u want to paste json file . and save

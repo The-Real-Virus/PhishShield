@@ -1,0 +1,26 @@
+Run this code directly in the Chrome Developer Console (F12 -> Console)
+while viewing the actual login page of a target bank or social media site:
+
+async function getMyHash() {
+    const stream = await navigator.mediaDevices.getDisplayMedia({video: {preferCurrentTab: true}});
+    const track = stream.getVideoTracks()[0];
+    const imageCapture = new ImageCapture(track);
+    const bitmap = await imageCapture.grabFrame();
+    track.stop();
+    const canvas = document.createElement('canvas');
+    canvas.width = 8; canvas.height = 8;
+    const ctx = canvas.getContext('2d');
+    ctx.drawImage(bitmap, 0, 0, 8, 8);
+    const imgData = ctx.getImageData(0,0,8,8).data;
+    let total=0; const grays=[];
+    for(let i=0;i<imgData.length;i+=4){
+        let g = imgData[i]*0.299 + imgData[i+1]*0.587 + imgData[i+2]*0.114;
+        grays.push(g); total+=g;
+    }
+    let avg = total/64, bin='';
+    grays.forEach(g => bin += g >= avg ? '1' : '0');
+    let hex='';
+    for(let i=0;i<64;i+=4) hex += parseInt(bin.substr(i,4),2).toString(16);
+    console.log("HASH FOR JSON:", hex);
+}
+getMyHash();

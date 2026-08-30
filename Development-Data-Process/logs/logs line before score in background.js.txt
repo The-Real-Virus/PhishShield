@@ -1,0 +1,16 @@
+console.log(`[Tab ${sender.tab.id}] Features:`, features);
+
+
+add here ,
+
+           // 1. Run Model
+            let rawScores = scoreModel(features);
+            let phishScore = Array.isArray(rawScores) ? rawScores[1] : rawScores;
+
+            console.log(`[Tab ${sender.tab.id}] Features:`, features);    <-----------------------------here
+            console.log(`[Tab ${sender.tab.id}] Raw ML Score: ${phishScore.toFixed(2)}`);
+
+            // 2. Apply Safety Net (Hybrid Logic)
+            const isHTTPS = features[7] === 1; // Feature 7 is SSL
+
+            if (isHTTPS) {

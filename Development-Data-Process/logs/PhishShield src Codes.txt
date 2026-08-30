@@ -1,0 +1,879 @@
+1. create_dataset.py:
+import pandas as pd
+import os
+from tqdm import tqdm
+import random
+
+# Import our feature extractor
+from feature_extractor import extract_all_features, FINAL_FEATURE_LIST
+
+# --- 1. Define Paths ---
+BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+DATA_DIR = os.path.join(BASE_DIR, "datasets")
+PROC_DATA_DIR = os.path.join(BASE_DIR, "processed_data")
+
+phishtank_path = os.path.join(DATA_DIR, "phishtank_urls.csv")
+legit_path = os.path.join(DATA_DIR, "top-1m.csv")
+output_path = os.path.join(PROC_DATA_DIR, "realistic_dataset.csv")
+
+# --- 2. Set Sample Size ---
+# We'll take 10,000 of each to start. 
+# Increase this for higher accuracy, but it will take longer.
+SAMPLE_SIZE = 10000
+
+# --- 3. Load and Process Phishing URLs ---
+print(f"--- Loading Phishing URLs from {phishtank_path} ---")
+try:
+    phish_df = pd.read_csv(phishtank_path)
+    # Get the 'url' column and shuffle it
+    phish_urls = phish_df['url'].sample(frac=1, random_state=42).tolist()
+    # Take our sample
+    phish_urls_sample = phish_urls[:min(len(phish_urls), SAMPLE_SIZE)]
+    print(f"Loaded {len(phish_urls)} phishing URLs. Using {len(phish_urls_sample)} samples.")
+except Exception as e:
+    print(f"Error loading PhishTank CSV: {e}")
+    print("Please ensure 'phishtank_urls.csv' is in 'datasets' folder.")
+    exit()
+
+# --- 4. Load and Process Legitimate URLs ---
+print(f"--- Loading Legitimate URLs from {legit_path} ---")
+try:
+    legit_df = pd.read_csv(legit_path, header=None, names=['Rank', 'Domain'])
+    # Get the 'Domain' column
+    legit_urls = legit_df['Domain'].tolist()
+    # Take our sample
+    legit_urls_sample = legit_urls[:min(len(legit_urls), SAMPLE_SIZE)]
+    print(f"Loaded {len(legit_urls)} legitimate URLs. Using {len(legit_urls_sample)} samples.")
+except Exception as e:
+    print(f"Error loading Top-1M CSV: {e}")
+    print("Please ensure 'top-1m.csv' is in 'datasets' folder.")
+    exit()
+
+
+# --- 5. Main Extraction Loop ---
+all_features = []
+all_labels = []
+
+print("\n--- Starting Feature Extraction (This will take a while...) ---")
+
+# Process Phishing URLs
+print("Processing Phishing URLs...")
+for url in tqdm(phish_urls_sample, desc="Phishing"):
+    try:
+        features = extract_all_features(url)
+        all_features.append(features)
+        all_labels.append(1) # Label 1 for Phishing
+    except Exception as e:
+        # print(f"Skipping {url} (Error: {e})")
+        pass # Skip URLs that fail
+
+# Process Legitimate URLs
+print("\nProcessing Legitimate URLs...")
+for domain in tqdm(legit_urls_sample, desc="Legitimate"):
+    # Add 'https://www.' to make it a full URL
+    url = f"https://www.{domain}"
+    try:
+        features = extract_all_features(url)
+        all_features.append(features)
+        all_labels.append(0) # Label 0 for Legitimate
+    except Exception as e:
+        # print(f"Skipping {url} (Error: {e})")
+        pass # Skip URLs that fail
+
+print("\n--- Feature extraction complete! ---")
+
+# --- 6. Create and Save DataFrame ---
+print("Creating DataFrame and saving to CSV...")
+
+# Create the final DataFrame
+final_df = pd.DataFrame(all_features, columns=FINAL_FEATURE_LIST)
+final_df['class'] = all_labels
+
+# Shuffle the dataset one last time
+final_df = final_df.sample(frac=1, random_state=42).reset_index(drop=True)
+
+# Save to disk
+final_df.to_csv(output_path, index=False)
+
+print(f"\n--- SUCCESS! ---")
+print(f"New dataset saved to: {output_path}")
+print(f"Total rows: {len(final_df)}")
+print("\nFirst 5 rows of new dataset:")
+print(final_df.head())
+
+2. deploy_rf_model.py:
+import m2cgen as m2c
+import joblib
+import os
+
+# --- 1. Setup Paths ---
+BASE_DIR = os.getcwd()
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+
+# Input Model Path
+INPUT_MODEL_PATH = os.path.join(MODELS_DIR, "phishshield_rf.joblib")
+
+# Output Paths
+# 1. Save in models folder (Archive/Organization)
+OUTPUT_ARCHIVE_PATH = os.path.join(MODELS_DIR, "model_logic.js")
+
+# --- 2. Load the Trained Model ---
+print(f"Loading trained model from: {INPUT_MODEL_PATH}...")
+try:
+    model = joblib.load(INPUT_MODEL_PATH)
+    print("Model loaded successfully.")
+except FileNotFoundError:
+    print("Error: Model file not found. Please run 'src/train_rf_model.py' first.")
+    exit()
+
+# --- 3. Convert to JavaScript ---
+print("Transpiling model to JavaScript (m2cgen)...")
+# This creates the 'scoreModel' function used by background.js
+try:
+    js_code = m2c.export_to_javascript(model, function_name="scoreModel")
+except Exception as e:
+    print(f"Error during transpilation: {e}")
+    exit()
+
+# --- 4. Save the Files ---
+
+# Save to Models Directory (Archive)
+with open(OUTPUT_ARCHIVE_PATH, "w") as f:
+    f.write(js_code)
+print(f"[Saved] JS Model Archive: {OUTPUT_ARCHIVE_PATH}")
+
+# --- 5. Stats ---
+size_kb = os.path.getsize(OUTPUT_ARCHIVE_PATH) / 1024
+print(f"\nSUCCESS! Deployment Complete.")
+print(f"Final JavaScript Model Size: {size_kb:.2f} KB")
+
+3. feature_extractor.py:
+import re
+import ipaddress
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+import tldextract
+
+# --- 1. URL-Based Features (11 Features) ---
+
+def having_IP(url):
+    try:
+        domain = urlparse(url).netloc
+        ipaddress.ip_address(domain)
+        return 1
+    except ValueError:
+        return 0
+
+def URL_Length(url):
+    return 1 if len(url) > 75 else 0
+
+def Shortining_Service(url):
+    shortening_services = [
+        "bit.ly", "goo.gl", "shorte.st", "go2l.ink", "x.co", "ow.ly", "t.co", "tinyurl", "tr.im", "is.gd", "cli.gs", "yfrog.com", "migre.me", "ff.im", "tiny.cc", "url4.eu", "twit.ac", "su.pr", "twurl.nl", "snipurl.com", "short.to", "budurl.com", "ping.fm", "post.ly", "just.as", "bkite.com", "snipr.com", "fic.kr", "loopt.us", "doiop.com", "short.ie", "kl.am", "wp.me", "rubyurl.com", "om.ly", "to.ly", "bit.do", "t.co", "lnkd.in", "db.tt", "qr.ae", "adf.ly", "goo.gl", "bitly.com", "cur.lv", "tinyurl.com", "ow.ly", "bit.ly", "ity.im", "q.gs", "is.gd", "po.st", "bc.vc", "twitthis.com", "u.to", "j.mp", "buzurl.com", "cutt.us", "u.bb", "yourls.org", "x.co", "prettylinkpro.com", "scrnch.me", "filoops.info", "vzturl.com", "qr.net", "1url.com", "tweez.me", "v.gd", "tr.im", "link.zip.net"
+    ]
+    domain = urlparse(url).netloc
+    for service in shortening_services:
+        if service in domain:
+            return 1
+    return 0
+
+def having_At_Symbol(url):
+    return 1 if "@" in url else 0
+
+def double_slash_redirecting(url):
+    return 1 if url.rfind('//') > 7 else 0
+
+def Prefix_Suffix(url):
+    domain = urlparse(url).netloc
+    return 1 if "-" in domain else 0
+
+def having_Sub_Domain(url):
+    ext = tldextract.extract(url)
+    subdomain = ext.subdomain
+    if not subdomain: return 0
+    if subdomain == 'www': return 0
+    return 1 if subdomain.count('.') > 0 else 0
+
+# --- NEW HIGH-DEF FEATURES ---
+def Hyphen_Count(url):
+    domain = urlparse(url).netloc
+    return domain.count('-')
+
+def Dot_Count(url):
+    domain = urlparse(url).netloc
+    if domain.startswith('www.'):
+        domain = domain[4:]
+    return domain.count('.')
+
+def Numeric_Chars(url):
+    domain = urlparse(url).netloc
+    return sum(c.isdigit() for c in domain)
+
+def Is_Common_TLD(url):
+    # 0 = Safe/Common, 1 = Risky/Uncommon
+    common_tlds = ['com', 'org', 'net', 'edu', 'gov', 'uk', 'us', 'ca', 'au', 'de', 'fr', 'it', 'jp', 'io', 'co', 'ai']
+    ext = tldextract.extract(url)
+    return 0 if ext.suffix in common_tlds else 1
+
+
+# --- 2. HTML & Content-Based Features (5 Features) ---
+
+def get_html_features(url):
+    feature_dict = {
+        'SFH': 0,
+        'Submitting_to_email': 0,
+        'on_mouseover': 0,
+        'RightClick': 0,
+        'Iframe': 0
+    }
+    
+    try:
+        headers = {'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/91.0.4472.124 Safari/537.36'}
+        response = requests.get(url, headers=headers, timeout=3)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        html_lower = response.text.lower()
+
+        # 1. SFH
+        for form in soup.find_all('form'):
+            action = form.get('action')
+            if not action or action == "about:blank" or action == "":
+                feature_dict['SFH'] = 1
+                break
+
+        # 2. Email
+        for form in soup.find_all('form'):
+            action = form.get('action')
+            if action and "mailto:" in action:
+                feature_dict['Submitting_to_email'] = 1
+                break
+
+        # 3. on_mouseover
+        if "onmouseover" in html_lower:
+            feature_dict['on_mouseover'] = 1
+
+        # 4. RightClick
+        if "event.button==2" in html_lower or "oncontextmenu" in html_lower:
+            feature_dict['RightClick'] = 1
+
+        # 5. Iframe
+        if len(soup.find_all('iframe')) > 0:
+            feature_dict['Iframe'] = 1
+
+    except:
+        pass 
+    
+    return feature_dict
+
+# --- 3. Main Function (Exports 16 Features) ---
+FINAL_FEATURE_LIST = [
+    'having_IP', 'URL_Length', 'Shortining_Service', 'having_At_Symbol',
+    'double_slash_redirecting', 'Prefix_Suffix', 'having_Sub_Domain',
+    'Hyphen_Count', 'Dot_Count', 'Numeric_Chars', 'Is_Common_TLD',
+    'SFH', 'Submitting_to_email', 'on_mouseover', 'RightClick', 'Iframe'
+]
+
+def extract_all_features(url):
+    features = []
+    
+    # URL Features
+    features.append(having_IP(url))
+    features.append(URL_Length(url))
+    features.append(Shortining_Service(url))
+    features.append(having_At_Symbol(url))
+    features.append(double_slash_redirecting(url))
+    features.append(Prefix_Suffix(url))
+    features.append(having_Sub_Domain(url))
+    
+    # New URL Features
+    features.append(Hyphen_Count(url))
+    features.append(Dot_Count(url))
+    features.append(Numeric_Chars(url))
+    features.append(Is_Common_TLD(url))
+
+    # HTML Features
+    html_f = get_html_features(url)
+    features.append(html_f['SFH'])
+    features.append(html_f['Submitting_to_email'])
+    features.append(html_f['on_mouseover'])
+    features.append(html_f['RightClick'])
+    features.append(html_f['Iframe'])
+
+    return features
+
+4. stress_dataset_build.py:
+import requests
+import pandas as pd
+import random
+import os
+
+# --- CONFIGURATION ---
+BASE_DIR = os.getcwd()
+DATASET_PATH = os.path.join(BASE_DIR, "dataset.csv")
+
+PHISH_COUNT = 500
+LEGIT_COUNT = 500
+
+# Standard User-Agent to prevent API blocking
+HEADERS = {
+    "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36"
+}
+
+def build_dataset():
+    dataset = []
+    print(f"🛠️ Starting PhishShield Dataset Builder...")
+
+    # --- 1. FETCH PHISHING SITES (OpenPhish) ---
+    print("\n[1/2] Fetching active zero-day phishing URLs from OpenPhish...")
+    try:
+        phish_resp = requests.get("https://openphish.com/feed.txt", headers=HEADERS, timeout=10)
+        phish_resp.raise_for_status()
+        
+        # Parse and clean URLs
+        phish_urls = [line.strip() for line in phish_resp.text.splitlines() if line.strip().startswith("http")]
+        
+        # Randomly sample the requested amount (or take all if less are available)
+        phish_sample = random.sample(phish_urls, min(PHISH_COUNT, len(phish_urls)))
+        
+        for url in phish_sample:
+            dataset.append({"url": url, "expected_label": "PHISHING"})
+            
+        print(f"✅ Successfully loaded {len(phish_sample)} phishing URLs.")
+    except Exception as e:
+        print(f"❌ Failed to fetch OpenPhish feed: {e}")
+
+    # --- 2. FETCH LEGITIMATE SITES (Majestic Million) ---
+    print("\n[2/2] Streaming Top 1M Legitimate Domains from Majestic...")
+    try:
+        legit_urls = []
+        # We use stream=True so we don't load a 100MB CSV into RAM just to get 500 lines
+        with requests.get("http://downloads.majestic.com/majestic_million.csv", stream=True, timeout=10) as r:
+            r.raise_for_status()
+            lines = r.iter_lines()
+            next(lines)  # Skip the CSV header row
+            
+            for _ in range(LEGIT_COUNT):
+                try:
+                    line = next(lines).decode('utf-8')
+                    # Majestic CSV format: GlobalRank,TldRank,Domain,...
+                    domain = line.split(',')[2] 
+                    legit_urls.append(f"https://www.{domain}")
+                except StopIteration:
+                    break
+                    
+        for url in legit_urls:
+            dataset.append({"url": url, "expected_label": "LEGITIMATE"})
+            
+        print(f"✅ Successfully loaded {len(legit_urls)} legitimate URLs.")
+    except Exception as e:
+        print(f"❌ Failed to fetch Majestic Million: {e}")
+
+    # --- 3. SHUFFLE AND SAVE ---
+    if not dataset:
+        print("\n⚠️ Failed to build dataset. Check your internet connection.")
+        return
+
+    print("\n[3/3] Shuffling dataset to randomize test order...")
+    df = pd.DataFrame(dataset)
+    
+    # Shuffle the dataframe so Legit/Phishing are completely mixed
+    df = df.sample(frac=1, random_state=42).reset_index(drop=True) 
+    
+    df.to_csv(DATASET_PATH, index=False)
+    print(f"🎉 Dataset successfully saved to: {DATASET_PATH}")
+    print(f"📊 Total Rows: {len(df)}")
+
+if __name__ == "__main__":
+    build_dataset()
+
+5. stress_test.py:
+from playwright.sync_api import sync_playwright, TimeoutError as PlaywrightTimeoutError
+import pandas as pd
+import os
+import time
+
+# --- CONFIGURATION ---
+BASE_DIR = os.getcwd()
+EXTENSION_PATH = os.path.join(BASE_DIR, "extension")
+DATASET_PATH = os.path.join(BASE_DIR, "dataset.csv") 
+REPORT_PATH = os.path.join(BASE_DIR, "v3_stress_test_report.csv")
+
+def run_stress_test():
+    try:
+        df = pd.read_csv(DATASET_PATH)
+        urls = df.to_dict('records')
+    except FileNotFoundError:
+        print(f"Error: Please create a {DATASET_PATH} file.")
+        return
+
+    results = []
+    metrics = {"TP": 0, "FP": 0, "TN": 0, "FN": 0, "Errors": 0}
+
+    print(f"🚀 Starting PhishShield v3.0 Stress Test Engine...")
+    print(f"📦 Loading Extension from: {EXTENSION_PATH}")
+    print(f"🌐 Target Sites: {len(urls)}\n")
+
+    with sync_playwright() as p:
+        browser_args = [
+            f"--disable-extensions-except={EXTENSION_PATH}",
+            f"--load-extension={EXTENSION_PATH}",
+        ]
+        
+        context = p.chromium.launch_persistent_context(
+            user_data_dir=os.path.join(BASE_DIR, "chrome_profile"),
+            headless=False, 
+            args=browser_args,
+            ignore_https_errors=True 
+        )
+        
+        page = context.new_page()
+        
+        # --- THE X-RAY VISION (Bridges Chrome Console to Python Terminal) ---
+        page.on("console", lambda msg: print(f"      [Chrome] {msg.text}"))
+        page.on("pageerror", lambda err: print(f"      [Chrome ERROR] {err}"))
+        
+        print("⏳ Waiting 6 seconds for Background Service Worker to boot & fetch GitLab data...")
+        time.sleep(6) # Increased boot time for fresh profiles
+
+        for i, item in enumerate(urls):
+            url = item['url']
+            expected = str(item['expected_label']).upper()
+            print(f"\n[{i+1}/{len(urls)}] Testing: {url[:60]}...")
+            
+            start_time = time.time()
+            actual_result = "ERROR"
+            score = "0"
+            
+            try:
+                # 1. Navigate to URL 
+                page.goto(url, timeout=15000, wait_until="domcontentloaded")
+                
+                # 2. Wait for content.js to inject our handshake tag (Increased to 8s)
+                element = page.wait_for_selector('#phishshield-result', state='attached', timeout=8000)
+                
+                # 3. Read the injected data
+                if element:
+                    content = element.get_attribute("content")
+                    if ":" in content:
+                        actual_result, score = content.split(":")
+                    else:
+                        actual_result = "PARSE_ERROR"
+                
+                # 4. Calculate Metrics
+                if actual_result == "PHISHING" and expected == "PHISHING": metrics["TP"] += 1
+                elif actual_result == "PHISHING" and expected == "LEGITIMATE": metrics["FP"] += 1
+                elif actual_result == "LEGITIMATE" and expected == "LEGITIMATE": metrics["TN"] += 1
+                elif actual_result == "LEGITIMATE" and expected == "PHISHING": metrics["FN"] += 1
+
+            except PlaywrightTimeoutError:
+                actual_result = "TIMEOUT"
+                metrics["Errors"] += 1
+            except Exception as e:
+                actual_result = f"FAILED: {str(e)[:20]}"
+                metrics["Errors"] += 1
+
+            latency = round((time.time() - start_time) * 1000, 2)
+            
+            icon = "✅" if actual_result == expected else ("⚠️" if "ERROR" in actual_result or "TIMEOUT" in actual_result else "❌")
+            print(f"    {icon} Result: {actual_result} ({score}%) | Expected: {expected} | Time: {latency}ms")
+            
+            results.append({
+                "url": url,
+                "expected": expected,
+                "actual": actual_result,
+                "score": score,
+                "latency_ms": latency
+            })
+
+        context.close()
+
+    # --- SAVE AND PRINT REPORT ---
+    report_df = pd.DataFrame(results)
+    report_df.to_csv(REPORT_PATH, index=False)
+    
+    total_valid = len(urls) - metrics["Errors"]
+    accuracy = ((metrics["TP"] + metrics["TN"]) / total_valid) * 100 if total_valid > 0 else 0
+    fpr = (metrics["FP"] / (metrics["FP"] + metrics["TN"])) * 100 if (metrics["FP"] + metrics["TN"]) > 0 else 0
+
+    print("\n" + "="*50)
+    print("📊 PHISHSHIELD V3.0 STRESS TEST RESULTS")
+    print("="*50)
+    print(f"Total Processed : {len(urls)}")
+    print(f"Errors/Dead URLs: {metrics['Errors']}")
+    print(f"Valid Tests     : {total_valid}")
+    print("-" * 50)
+    print(f"🎯 ACCURACY            : {accuracy:.2f}%")
+    print(f"🚨 FALSE POSITIVE RATE : {fpr:.2f}% (Target: < 1.0%)")
+    print("="*50)
+
+if __name__ == "__main__":
+    run_stress_test()
+
+6. test_automation.py:
+import pandas as pd
+import joblib
+import os
+import requests
+from bs4 import BeautifulSoup
+from urllib.parse import urlparse
+from feature_extractor import extract_all_features
+import warnings
+warnings.filterwarnings("ignore", category=UserWarning)
+
+# --- 1. Setup ---
+BASE_DIR = os.getcwd()
+MODEL_PATH = os.path.join(BASE_DIR, "models", "phishshield_rf.joblib")
+
+# --- 2. The Universal Test Suite ---
+test_urls = [
+    # LEGITIMATE SITES (Should be SAFE)
+    "https://www.google.com",
+    "https://web.whatsapp.com",       
+    "https://www.amazon.com",
+    "https://grok.com",               
+    "https://stackoverflow.com",      
+    "https://github.com",
+    "https://www.instagram.com",      
+    "https://www.instagram.com/accounts/login/?hl=en",
+    "https://gemini.google.com/app?",
+    "https://www.netflix.com/browse",
+    "https://openai.com/research/",
+    "https://www.youtube.com/",
+    "https://www.facebook.com/login.php",
+    "https://www.facebook.com/",    
+    
+    # PHISHING SITES (Should be PHISHING)
+    "http://82273v.com",              
+    "http://trezor.la",               
+    "https://secure-update-paypal-login.com", 
+    "http://testsafebrowsing.appspot.com/s/phishing.html",
+    "https://allegro.prytwanite5.sbs", 
+    "https://ma.usa.codify.inc/",
+    "https://www.web3vaultencrypt.com/wallets",
+    "http://testsafebrowsing.appspot.com/s/phishing.html",
+    "http://allegro.15s195j181-1s.sbs",
+    "https://kra4.pro/",
+    "https://allegro-lokalnie.oi383y3y.cfd",
+    "https://iconeflow.com/",
+    "https://promoairfryer.online/",
+    "https://0xpr.top/usdc/?claim.circle.com",
+    "http://bigtrout300.lol",
+    "https://web3chatbot.com/",
+    "http://www.alturasbuga.com/9muljx",
+    "https://vivasorteoficial.com.ua/",
+    "https://vivasortecapitalizacao.com/"
+]
+
+# --- 3. The Mega-Whitelist (Mirrors whitelist.js) ---
+TRUSTED_DOMAINS = {
+    'google.com', 'youtube.com', 'facebook.com', 'amazon.com', 'wikipedia.org', 
+    'twitter.com', 'linkedin.com', 'instagram.com', 'netflix.com', 'microsoft.com', 
+    'github.com', 'whatsapp.com', 'apple.com', 'yahoo.com', 'bing.com', 
+    'live.com', 'office.com', 'twitch.tv', 'adobe.com', 'paypal.com', 
+    'stackoverflow.com', 'reddit.com', 'tiktok.com', 'zoom.us', 'salesforce.com', 
+    'canva.com', 'ebay.com', 'dropbox.com', 'openai.com', 'grok.com'
+}
+
+# --- 4. Load Model ---
+print(f"Loading model from {MODEL_PATH}...")
+try:
+    model = joblib.load(MODEL_PATH)
+except:
+    print("Error: Model not found. Run src/deploy_rf_model.py first.")
+    exit()
+
+# --- 5. Phase 2: NLP Content Scanner (Python Equivalent) ---
+def calculate_nlp_score(url):
+    try:
+        # Fetch page content with a short timeout
+        response = requests.get(url, timeout=3)
+        soup = BeautifulSoup(response.content, 'html.parser')
+        text_content = soup.get_text().lower()
+
+        nlp_score = 0
+        urgency_words = ['suspended', 'locked', 'banned', 'unauthorized', 'prevent', 'immediately', 'urgent', 'shutdown', 'deactivate']
+        sensitive_words = ['password', 'credit card', 'social security', 'bank account', 'routing number', 'pin', 'verify identity']
+        action_words = ['click here', 'login', 'sign in', 'update now', 'confirm', 'restore']
+
+        has_urgency = any(w in text_content for w in urgency_words)
+        has_sensitive = any(w in text_content for w in sensitive_words)
+        has_action = any(w in text_content for w in action_words)
+
+        if has_urgency and has_sensitive: nlp_score += 0.25
+        if has_action and has_sensitive: nlp_score += 0.15
+        if has_urgency and has_action: nlp_score += 0.15
+
+        return nlp_score
+    except Exception:
+        # Fails silently if site is dead/offline, mirroring client-side behavior
+        return 0.0
+
+# --- 6. The Hybrid Logic Function ---
+def get_hybrid_score(features, url, nlp_score):
+    raw_score = model.predict_proba([features])[0][1]
+    
+    hyphen_count = features[7]
+    numeric_chars = features[9]
+    is_risky_tld = features[10]
+    
+    final_score = raw_score
+    logic_applied = []
+
+    # Rule A: High Entropy
+    if numeric_chars >= 4:
+        final_score += 0.45
+        logic_applied.append("ENTROPY")
+
+    # Rule B: Structure Imitation
+    if hyphen_count > 1:
+        final_score += 0.25 
+        logic_applied.append("STRUCTURE")
+
+    # Rule C: Low Reputation TLD
+    if is_risky_tld == 1:
+        final_score += 0.30 
+        logic_applied.append("RISKY_TLD")
+
+    # Rule D: Intent Keywords
+    dangerous_words = ['login', 'verify', 'account', 'update', 'wallet', 'vault', 'secure', 'confirm', 'banking']
+    if any(w in url.lower() for w in dangerous_words):
+        final_score += 0.20
+        logic_applied.append("INTENT_KEYWORD")
+
+    # Phase 2: Apply NLP Score
+    if nlp_score > 0:
+        final_score += nlp_score
+        logic_applied.append(f"NLP_SCAN(+{nlp_score:.2f})")
+
+    # Clamp Score
+    final_score = min(final_score, 1.0)
+
+    # Rule E: Whitelist Safety Net
+    try:
+        domain = urlparse(url).netloc
+        clean_domain = domain.replace("www.", "")
+        is_trusted = False
+        
+        if clean_domain in TRUSTED_DOMAINS:
+            is_trusted = True
+        else:
+            for trusted in TRUSTED_DOMAINS:
+                if clean_domain.endswith("." + trusted):
+                    is_trusted = True
+                    break
+        
+        if is_trusted:
+            final_score = 0.0
+            logic_applied.append("WHITELISTED")
+    except:
+        pass
+
+    return final_score, raw_score, logic_applied
+
+# --- 7. Run Automation ---
+print(f"\n{'URL':<45} | {'RAW':<5} | {'FINAL':<5} | {'RESULT':<10} | {'LOGIC USED'}")
+print("-" * 125)
+
+for url in test_urls:
+    try:
+        feats = extract_all_features(url)
+        nlp_score = calculate_nlp_score(url) 
+        final_score, raw_score, logic = get_hybrid_score(feats, url, nlp_score)
+        
+        result = "PHISHING" if final_score > 0.50 else "LEGIT"
+        
+        logic_str = ", ".join(logic) if logic else "ML_ONLY"
+        
+        print(f"{url[:45]:<45} | {raw_score:.2f}  | {final_score:.2f}  | {result:<10} | {logic_str}")
+    except Exception as e:
+        print(f"Error processing {url}: {e}")
+
+print("-" * 125)
+
+7. train_deploy.py:
+import pandas as pd
+import m2cgen as m2c
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+import os
+
+# --- 1. Setup Paths ---
+BASE_DIR = os.getcwd()
+DATA_PATH = os.path.join(BASE_DIR, "processed_data", "realistic_dataset.csv")
+EXTENSION_DIR = os.path.join(BASE_DIR, "extension")
+
+# Create extension folder if it doesn't exist (we will populate it later)
+os.makedirs(EXTENSION_DIR, exist_ok=True)
+
+# --- 2. Load Your Data ---
+print(f"Loading data from {DATA_PATH}...")
+try:
+    df = pd.read_csv(DATA_PATH)
+except FileNotFoundError:
+    print("Error: realistic_dataset.csv not found. Please run create_dataset.py first.")
+    exit()
+
+# Separate Features (X) and Target (y)
+X = df.drop('class', axis=1)
+y = df['class']
+
+# --- 3. Train the Model (The "Deadline-Friendly" Configuration) ---
+# We use n_estimators=20 and max_depth=10 as recommended by research
+# to keep the resulting JavaScript file small and fast.
+print("Training Random Forest (Optimized for Browser)...")
+clf = RandomForestClassifier(
+    n_estimators=20, 
+    max_depth=10, 
+    random_state=42
+)
+clf.fit(X, y)
+
+# Evaluate Accuracy
+accuracy = clf.score(X, y)
+print(f"--- Model Accuracy: {accuracy * 100:.2f}% ---")
+
+# --- 4. Convert to JavaScript ---
+print("Transpiling model to JavaScript...")
+# This converts the Python trees into a JavaScript function named 'scoreModel'
+js_code = m2c.export_to_javascript(clf, function_name="scoreModel")
+
+# --- 5. Save to Extension Folder ---
+output_path = os.path.join(EXTENSION_DIR, "model_logic.js")
+with open(output_path, "w") as f:
+    f.write(js_code)
+
+print(f"SUCCESS! Javascript model saved to: {output_path}")
+print(f"File size: {os.path.getsize(output_path) / 1024:.2f} KB")
+
+8. train_rf_model.py:
+import pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import roc_auc_score, average_precision_score, brier_score_loss
+import joblib
+import os
+
+# --- 1. Setup Paths ---
+BASE_DIR = os.getcwd()
+DATA_PATH = os.path.join(BASE_DIR, "processed_data", "realistic_dataset.csv")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+os.makedirs(MODELS_DIR, exist_ok=True)
+
+# --- 2. Load Data ---
+print(f"Loading data from {DATA_PATH}...")
+try:
+    df = pd.read_csv(DATA_PATH)
+except FileNotFoundError:
+    print("Error: Dataset not found.")
+    exit()
+
+# Separate Features (X) and Target (y)
+X = df.drop('class', axis=1)
+y = df['class']
+
+# Split into Training (80%) and Testing (20%)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# --- 3. Train Model ---
+# We use parameters optimized for Browser Extensions (Low depth = smaller file)
+print("Training Random Forest...")
+model = RandomForestClassifier(
+    n_estimators=100,      # Stability
+    max_depth=10,          # Size Control (<500KB)
+    min_samples_leaf=15,   # Prevents Overfitting (Real-world fix)
+    max_features='sqrt',   # Diversity
+    random_state=42
+)
+model.fit(X_train, y_train)
+
+# --- 4. Detailed Evaluation ---
+print("\n--- Evaluation Report ---")
+y_pred = model.predict(X_test)
+
+# Accuracy
+acc = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {acc * 100:.2f}%")
+
+# Full Report (Precision, Recall, F1)
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=['Legitimate', 'Phishing']))
+
+# Get probability scores for the positive class (Phishing)
+y_prob = model.predict_proba(X_test)[:, 1]
+
+roc_auc = roc_auc_score(y_test, y_prob)
+pr_auc = average_precision_score(y_test, y_prob)
+brier = brier_score_loss(y_test, y_prob)
+
+print(f"ROC-AUC: {roc_auc:.4f}")
+print(f"PR-AUC: {pr_auc:.4f}")
+print(f"Brier Score: {brier:.4f}")
+
+# Confusion Matrix (The Truth Table)
+cm = confusion_matrix(y_test, y_pred)
+print("Confusion Matrix (Console):")
+print(cm)
+
+# --- 5. Generate & Save Confusion Matrix Image ---
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=['Legitimate', 'Phishing'], 
+            yticklabels=['Legitimate', 'Phishing'])
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('PhishShield Model Performance')
+cm_path = os.path.join(MODELS_DIR, "confusion_matrix.png")
+plt.savefig(cm_path)
+print(f"\n[Visual] Confusion Matrix saved to: {cm_path}")
+
+# --- 6. Save the Model ---
+model_path = os.path.join(MODELS_DIR, "phishshield_rf.joblib")
+joblib.dump(model, model_path)
+print(f"[Success] Trained model saved to: {model_path}")
+
+9. ablation_test.py:
+import pandas as pd
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import confusion_matrix, accuracy_score
+
+# Load Data
+df = pd.read_csv("processed_data/realistic_dataset.csv")
+
+# Define Feature Groups
+url_features = [
+    'having_IP', 'URL_Length', 'Shortining_Service', 'having_At_Symbol',
+    'double_slash_redirecting', 'Prefix_Suffix', 'having_Sub_Domain',
+    'Hyphen_Count', 'Dot_Count', 'Numeric_Chars', 'Is_Common_TLD'
+]
+html_features = ['SFH', 'Submitting_to_email', 'on_mouseover', 'RightClick', 'Iframe']
+all_features = url_features + html_features
+
+y = df['class']
+
+def evaluate_ablation(features_list, name):
+    X = df[features_list]
+    X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+    
+    # Golden Configuration
+    model = RandomForestClassifier(n_estimators=100, max_depth=10, min_samples_leaf=15, max_features='sqrt', random_state=42)
+    model.fit(X_train, y_train)
+    
+    y_pred = model.predict(X_test)
+    acc = accuracy_score(y_test, y_pred)
+    cm = confusion_matrix(y_test, y_pred)
+    
+    TN, FP, FN, TP = cm.ravel()
+    TPR = TP / (TP + FN)  # True Positive Rate (Recall)
+    FPR = FP / (FP + TN)  # False Positive Rate
+    
+    print(f"--- {name} ---")
+    print(f"Accuracy: {acc*100:.2f}% | TPR (Recall): {TPR*100:.2f}% | FPR: {FPR*100:.2f}%")
+
+print("Running Feature Ablation Study...\n")
+evaluate_ablation(url_features, "Lexical & URL Features ONLY")
+evaluate_ablation(html_features, "HTML & DOM Features ONLY")
+evaluate_ablation(all_features, "All 16 Features (Combined)")

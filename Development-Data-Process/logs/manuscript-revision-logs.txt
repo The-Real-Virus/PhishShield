@@ -1,0 +1,49 @@
+1. Retrain for ROC-AUC, PR-AUC, Brier Score etc
+
+PS E:\zTEMP\v3.0> python E:\zTEMP\v3.0\src\train_rf_model.py
+Loading data from E:\zTEMP\v3.0\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+
+Accuracy: 86.65%
+
+Classification Report:
+
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.91      0.87      1945
+    Phishing       0.91      0.82      0.86      2055
+
+    accuracy                           0.87      4000
+
+   macro avg       0.87      0.87      0.87      4000
+weighted avg       0.87      0.87      0.87      4000
+
+
+ROC-AUC: 0.9163
+PR-AUC: 0.9341
+Brier Score: 0.1065
+
+Confusion Matrix (Console):
+[[1771  174]
+ [ 360 1695]]
+
+[Visual] Confusion Matrix saved to: E:\zTEMP\v3.0\models\confusion_matrix.png
+[Success] Trained model saved to: E:\zTEMP\v3.0\models\phishshield_rf.joblib
+PS E:\zTEMP\v3.0> 
+
+2. Ablation Study etc
+
+raw:
+PS E:\zTEMP\v3.0> python E:\zTEMP\v3.0\src\ablation_test.py
+Running Feature Ablation Study...
+
+--- Lexical & URL Features ONLY ---
+Accuracy: 86.50% | TPR (Recall): 82.53% | FPR: 9.31%
+--- HTML & DOM Features ONLY ---
+Accuracy: 50.98% | TPR (Recall): 14.99% | FPR: 11.00%
+--- All 16 Features (Combined) ---
+Accuracy: 86.65% | TPR (Recall): 82.48% | FPR: 8.95%
+PS E:\zTEMP\v3.0> 
+

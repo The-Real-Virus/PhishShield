@@ -1,0 +1,45 @@
+E:\FYP\PhishShield\
+   	  ├── datasets\		<-- here is the raw data sets.
+   	  |         ├── phishtank_urls.csv
+  	  |         ├── datasets links.txt
+  	  |         └── top-1m.csv
+   	  |
+  	  ├── extension\		<-- here is the extension files.
+  	  |         ├── assets\				
+   	  |         |       ├── logo.png       
+          |         ├── background.js
+          |         ├── content.js
+          |         ├── feature_extractor.js
+   	  |         ├── manifest.json
+    	  |         ├── model_logic.js
+    	  |         ├── offscreen.html
+    	  |         ├── offscreen.js
+    	  |         ├── phash_fallback.js
+    	  |         ├── popup.css
+    	  |         ├── popup.html
+     	  |         ├── popup.js
+    	  |         ├── whitelist.js
+	  |
+	  ├── logs\		<-- this folder contains logs including training and testing logs etc.
+	  |      ├── logs txt files
+    	  |
+          ├── models\			    	<-- here our trained model and transpiled js archive.
+          |      ├── confusion_matrix.png
+          |  	 ├── model_logic.js
+          |  	 ├── phishshield_rf.joblib
+	  |
+          ├── processed_data\	    	<-- here is data we engineered using feature_extractor.py & create_dataset.py on which model is trained.
+  	  |         ├── realistic_dataset.csv
+	  |
+   	  ├── src\				<-- here are the scripts.
+          |	 ├── create_dataset.py
+          |	 ├── feature_extractor.py
+	  |      ├── deploy_rf_model.py
+	  |      ├── stress_dataset_build.py
+	  |      ├── stress_test.py
+	  |      ├── test_automation.py
+	  |      ├── train_deploy.py
+	  |      ├── train_rf_model.py
+	  |	 ├── ablation_test.py
+	  |
+	  └── requirements.txt 	<-- here are the library etc requirements for vs code etc to work with this project.
