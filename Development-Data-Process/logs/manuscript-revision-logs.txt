@@ -1,5 +1,7 @@
 1. Retrain for ROC-AUC, PR-AUC, Brier Score etc
 
+A. Golden Config model:
+
 PS E:\zTEMP\v3.0> python E:\zTEMP\v3.0\src\train_rf_model.py
 Loading data from E:\zTEMP\v3.0\processed_data\realistic_dataset.csv...
 Training Random Forest...
@@ -28,6 +30,36 @@ Brier Score: 0.1065
 Confusion Matrix (Console):
 [[1771  174]
  [ 360 1695]]
+
+[Visual] Confusion Matrix saved to: E:\zTEMP\v3.0\models\confusion_matrix.png
+[Success] Trained model saved to: E:\zTEMP\v3.0\models\phishshield_rf.joblib
+PS E:\zTEMP\v3.0> 
+
+B. 20-tree baseline model:
+
+PS E:\zTEMP\v3.0> python E:\zTEMP\v3.0\src\train_rf_model.py
+Loading data from E:\zTEMP\v3.0\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 87.30%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.92      0.88      1945
+    Phishing       0.92      0.83      0.87      2055
+
+    accuracy                           0.87      4000
+   macro avg       0.88      0.87      0.87      4000
+weighted avg       0.88      0.87      0.87      4000
+
+ROC-AUC: 0.9244
+PR-AUC: 0.9394
+Brier Score: 0.0954
+Confusion Matrix (Console):
+[[1795  150]
+ [ 358 1697]]
 
 [Visual] Confusion Matrix saved to: E:\zTEMP\v3.0\models\confusion_matrix.png
 [Success] Trained model saved to: E:\zTEMP\v3.0\models\phishshield_rf.joblib
