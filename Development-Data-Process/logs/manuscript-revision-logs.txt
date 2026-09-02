@@ -64,6 +64,7 @@ Confusion Matrix (Console):
 [Visual] Confusion Matrix saved to: E:\zTEMP\v3.0\models\confusion_matrix.png
 [Success] Trained model saved to: E:\zTEMP\v3.0\models\phishshield_rf.joblib
 PS E:\zTEMP\v3.0> 
+_________________________________________________________________________________________________________
 
 2. Ablation Study etc
 
@@ -78,4 +79,406 @@ Accuracy: 50.98% | TPR (Recall): 14.99% | FPR: 11.00%
 --- All 16 Features (Combined) ---
 Accuracy: 86.65% | TPR (Recall): 82.48% | FPR: 8.95%
 PS E:\zTEMP\v3.0> 
+_________________________________________________________________________________________________________
 
+3. ECE and plots etc
+
+A. Scripts to run:
+
+For Golden Config:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import roc_auc_score, average_precision_score, brier_score_loss, roc_curve, precision_recall_curve
+from sklearn.calibration import calibration_curve
+import joblib
+import os
+
+# --- Helper Function for ECE ---
+def calculate_ece(y_true, y_prob, n_bins=10):
+    # Ensure y_true is a numpy array for safe indexing
+    y_true = np.array(y_true)
+    bins = np.linspace(0., 1., n_bins + 1)
+    binids = np.digitize(y_prob, bins) - 1
+    
+    ece = 0.0
+    for i in range(n_bins):
+        bin_mask = (binids == i)
+        if np.sum(bin_mask) > 0:
+            prob_true_bin = y_true[bin_mask].mean()
+            prob_pred_bin = y_prob[bin_mask].mean()
+            bin_weight = np.sum(bin_mask) / len(y_prob)
+            ece += bin_weight * np.abs(prob_true_bin - prob_pred_bin)
+            
+    return ece
+
+# --- Helper Function for LaTeX Sampling ---
+def get_latex_coordinates(x, y, num_points=15):
+    # Downsamples the points so LaTeX doesn't crash from thousands of coordinates
+    indices = np.linspace(0, len(x) - 1, num_points, dtype=int)
+    return " ".join([f"({x[i]:.3f}, {y[i]:.3f})" for i in indices])
+
+# --- 1. Setup Paths ---
+BASE_DIR = os.getcwd()
+DATA_PATH = os.path.join(BASE_DIR, "processed_data", "realistic_dataset.csv")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+os.makedirs(MODELS_DIR, exist_ok=True)
+
+# --- 2. Load Data ---
+print(f"Loading data from {DATA_PATH}...")
+try:
+    df = pd.read_csv(DATA_PATH)
+except FileNotFoundError:
+    print("Error: Dataset not found.")
+    exit()
+
+# Separate Features (X) and Target (y)
+X = df.drop('class', axis=1)
+y = df['class']
+
+# Split into Training (80%) and Testing (20%)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# --- 3. Train Model ---
+# We use parameters optimized for Browser Extensions (Low depth = smaller file)
+print("Training Random Forest...")
+model = RandomForestClassifier(
+    n_estimators=100,      # Stability
+    max_depth=10,          # Size Control (<500KB)
+    min_samples_leaf=15,   # Prevents Overfitting (Real-world fix)
+    max_features='sqrt',   # Diversity
+    random_state=42
+)
+model.fit(X_train, y_train)
+
+# --- 4. Detailed Evaluation ---
+print("\n--- Evaluation Report ---")
+y_pred = model.predict(X_test)
+
+# Accuracy
+acc = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {acc * 100:.2f}%")
+
+# Full Report (Precision, Recall, F1)
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=['Legitimate', 'Phishing']))
+
+# Get probability scores for the positive class (Phishing)
+y_prob = model.predict_proba(X_test)[:, 1]
+
+roc_auc = roc_auc_score(y_test, y_prob)
+pr_auc = average_precision_score(y_test, y_prob)
+brier = brier_score_loss(y_test, y_prob)
+ece_value = calculate_ece(y_test, y_prob)
+
+print(f"ROC-AUC: {roc_auc:.4f}")
+print(f"PR-AUC: {pr_auc:.4f}")
+print(f"Brier Score: {brier:.4f}")
+print(f"Expected Calibration Error (ECE): {ece_value:.4f}")
+
+# Confusion Matrix (The Truth Table)
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix (Console):")
+print(cm)
+
+# --- 5. Generate & Save Images ---
+# 5a. Confusion Matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=['Legitimate', 'Phishing'], 
+            yticklabels=['Legitimate', 'Phishing'])
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('PhishShield Model Performance')
+cm_path = os.path.join(MODELS_DIR, "confusion_matrix.png")
+plt.savefig(cm_path)
+plt.close()
+print(f"\n[Visual] Confusion Matrix saved to: {cm_path}")
+
+# 5b. ROC & PR Curves (Saved as images and exported for LaTeX)
+fpr, tpr, _ = roc_curve(y_test, y_prob)
+prec, rec, _ = precision_recall_curve(y_test, y_prob)
+
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], color='gray', lw=1, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC Curve')
+plt.legend(loc="lower right")
+
+plt.subplot(1, 2, 2)
+plt.plot(rec, prec, color='red', lw=2, label=f'PR curve (AUC = {pr_auc:.2f})')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title('Precision-Recall Curve')
+plt.legend(loc="lower left")
+
+curves_path = os.path.join(MODELS_DIR, "roc_pr_curves.png")
+plt.savefig(curves_path)
+plt.close()
+print(f"[Visual] ROC & PR Curves saved to: {curves_path}")
+
+# --- Output LaTeX Coordinates for the Manuscript ---
+print("\n--- COPY THESE COORDINATES FOR YOUR LATEX MANUSCRIPT ---")
+print("ROC Coordinates:")
+print(get_latex_coordinates(fpr, tpr, num_points=20))
+print("\nPR Coordinates:")
+print(get_latex_coordinates(rec, prec, num_points=20))
+print("----------------------------------------------------------\n")
+
+# --- 6. Save the Model ---
+model_path = os.path.join(MODELS_DIR, "phishshield_rf.joblib")
+joblib.dump(model, model_path)
+print(f"[Success] Trained model saved to: {model_path}")
+
+For 20 tree baseline:
+
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
+from sklearn.ensemble import RandomForestClassifier
+from sklearn.model_selection import train_test_split
+from sklearn.metrics import accuracy_score, classification_report, confusion_matrix
+from sklearn.metrics import roc_auc_score, average_precision_score, brier_score_loss, roc_curve, precision_recall_curve
+from sklearn.calibration import calibration_curve
+import joblib
+import os
+
+# --- Helper Function for ECE ---
+def calculate_ece(y_true, y_prob, n_bins=10):
+    # Ensure y_true is a numpy array for safe indexing
+    y_true = np.array(y_true)
+    bins = np.linspace(0., 1., n_bins + 1)
+    binids = np.digitize(y_prob, bins) - 1
+    
+    ece = 0.0
+    for i in range(n_bins):
+        bin_mask = (binids == i)
+        if np.sum(bin_mask) > 0:
+            prob_true_bin = y_true[bin_mask].mean()
+            prob_pred_bin = y_prob[bin_mask].mean()
+            bin_weight = np.sum(bin_mask) / len(y_prob)
+            ece += bin_weight * np.abs(prob_true_bin - prob_pred_bin)
+            
+    return ece
+
+# --- Helper Function for LaTeX Sampling ---
+def get_latex_coordinates(x, y, num_points=15):
+    # Downsamples the points so LaTeX doesn't crash from thousands of coordinates
+    indices = np.linspace(0, len(x) - 1, num_points, dtype=int)
+    return " ".join([f"({x[i]:.3f}, {y[i]:.3f})" for i in indices])
+
+# --- 1. Setup Paths ---
+BASE_DIR = os.getcwd()
+DATA_PATH = os.path.join(BASE_DIR, "processed_data", "realistic_dataset.csv")
+MODELS_DIR = os.path.join(BASE_DIR, "models")
+os.makedirs(MODELS_DIR, exist_ok=True)
+
+# --- 2. Load Data ---
+print(f"Loading data from {DATA_PATH}...")
+try:
+    df = pd.read_csv(DATA_PATH)
+except FileNotFoundError:
+    print("Error: Dataset not found.")
+    exit()
+
+# Separate Features (X) and Target (y)
+X = df.drop('class', axis=1)
+y = df['class']
+
+# Split into Training (80%) and Testing (20%)
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# --- 3. Train Model ---
+# We use parameters optimized for Browser Extensions (Low depth = smaller file)
+print("Training Random Forest...")
+model = RandomForestClassifier(
+    n_estimators=20,   # 20 trees is efficient
+    max_depth=10,      # Limit depth to prevent huge file size
+    random_state=42
+)
+model.fit(X_train, y_train)
+
+# --- 4. Detailed Evaluation ---
+print("\n--- Evaluation Report ---")
+y_pred = model.predict(X_test)
+
+# Accuracy
+acc = accuracy_score(y_test, y_pred)
+print(f"Accuracy: {acc * 100:.2f}%")
+
+# Full Report (Precision, Recall, F1)
+print("\nClassification Report:")
+print(classification_report(y_test, y_pred, target_names=['Legitimate', 'Phishing']))
+
+# Get probability scores for the positive class (Phishing)
+y_prob = model.predict_proba(X_test)[:, 1]
+
+roc_auc = roc_auc_score(y_test, y_prob)
+pr_auc = average_precision_score(y_test, y_prob)
+brier = brier_score_loss(y_test, y_prob)
+ece_value = calculate_ece(y_test, y_prob)
+
+print(f"ROC-AUC: {roc_auc:.4f}")
+print(f"PR-AUC: {pr_auc:.4f}")
+print(f"Brier Score: {brier:.4f}")
+print(f"Expected Calibration Error (ECE): {ece_value:.4f}")
+
+# Confusion Matrix (The Truth Table)
+cm = confusion_matrix(y_test, y_pred)
+print("\nConfusion Matrix (Console):")
+print(cm)
+
+# --- 5. Generate & Save Images ---
+# 5a. Confusion Matrix
+plt.figure(figsize=(8, 6))
+sns.heatmap(cm, annot=True, fmt='d', cmap='Blues', 
+            xticklabels=['Legitimate', 'Phishing'], 
+            yticklabels=['Legitimate', 'Phishing'])
+plt.xlabel('Predicted')
+plt.ylabel('Actual')
+plt.title('PhishShield Model Performance')
+cm_path = os.path.join(MODELS_DIR, "confusion_matrix.png")
+plt.savefig(cm_path)
+plt.close()
+print(f"\n[Visual] Confusion Matrix saved to: {cm_path}")
+
+# 5b. ROC & PR Curves (Saved as images and exported for LaTeX)
+fpr, tpr, _ = roc_curve(y_test, y_prob)
+prec, rec, _ = precision_recall_curve(y_test, y_prob)
+
+plt.figure(figsize=(12, 5))
+plt.subplot(1, 2, 1)
+plt.plot(fpr, tpr, color='blue', lw=2, label=f'ROC curve (AUC = {roc_auc:.2f})')
+plt.plot([0, 1], [0, 1], color='gray', lw=1, linestyle='--')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('False Positive Rate')
+plt.ylabel('True Positive Rate')
+plt.title('ROC Curve')
+plt.legend(loc="lower right")
+
+plt.subplot(1, 2, 2)
+plt.plot(rec, prec, color='red', lw=2, label=f'PR curve (AUC = {pr_auc:.2f})')
+plt.xlim([0.0, 1.0])
+plt.ylim([0.0, 1.05])
+plt.xlabel('Recall')
+plt.ylabel('Precision')
+plt.title('Precision-Recall Curve')
+plt.legend(loc="lower left")
+
+curves_path = os.path.join(MODELS_DIR, "roc_pr_curves.png")
+plt.savefig(curves_path)
+plt.close()
+print(f"[Visual] ROC & PR Curves saved to: {curves_path}")
+
+# --- Output LaTeX Coordinates for the Manuscript ---
+print("\n--- COPY THESE COORDINATES FOR YOUR LATEX MANUSCRIPT ---")
+print("ROC Coordinates:")
+print(get_latex_coordinates(fpr, tpr, num_points=20))
+print("\nPR Coordinates:")
+print(get_latex_coordinates(rec, prec, num_points=20))
+print("----------------------------------------------------------\n")
+
+# --- 6. Save the Model ---
+model_path = os.path.join(MODELS_DIR, "phishshield_rf.joblib")
+joblib.dump(model, model_path)
+print(f"[Success] Trained model saved to: {model_path}")
+
+B. Results/Logs
+
+Golden Config:
+
+PS E:\zTEMP\v3.0> python E:\zTEMP\v3.0\src\train_rf_model.py
+Loading data from E:\zTEMP\v3.0\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 86.65%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.91      0.87      1945
+    Phishing       0.91      0.82      0.86      2055
+
+    accuracy                           0.87      4000
+   macro avg       0.87      0.87      0.87      4000
+weighted avg       0.87      0.87      0.87      4000
+
+ROC-AUC: 0.9163
+PR-AUC: 0.9341
+Brier Score: 0.1065
+Expected Calibration Error (ECE): 0.0666
+
+Confusion Matrix (Console):
+[[1771  174]
+ [ 360 1695]]
+
+[Visual] Confusion Matrix saved to: E:\zTEMP\v3.0\models\confusion_matrix.png
+[Visual] ROC & PR Curves saved to: E:\zTEMP\v3.0\models\roc_pr_curves.png
+
+--- COPY THESE COORDINATES FOR YOUR LATEX MANUSCRIPT ---
+ROC Coordinates:
+(0.000, 0.000) (0.000, 0.150) (0.000, 0.196) (0.000, 0.214) (0.000, 0.269) (0.000, 0.300) (0.000, 0.318) (0.000, 0.351) (0.000, 0.393) (0.001, 0.443) (0.001, 0.584) (0.001, 0.626) (0.004, 0.643) (0.027, 0.774) (0.088, 0.824) (0.101, 0.828) (0.192, 0.857) (0.445, 0.926) (0.947, 0.998) (1.000, 1.000)
+
+PR Coordinates:
+(1.000, 0.514) (0.929, 0.672) (0.924, 0.691) (0.856, 0.827) (0.826, 0.906) (0.775, 0.965) (0.646, 0.994) (0.628, 0.998) (0.582, 0.998) (0.414, 1.000) (0.394, 1.000) (0.369, 1.000) (0.318, 1.000) (0.301, 1.000) (0.277, 1.000) (0.219, 1.000) (0.202, 1.000) (0.164, 1.000) (0.149, 1.000) (0.000, 1.000)
+----------------------------------------------------------
+
+[Success] Trained model saved to: E:\zTEMP\v3.0\models\phishshield_rf.joblib
+PS E:\zTEMP\v3.0> 
+
+20 tree Baseline:
+
+PS E:\zTEMP\v3.0> python E:\zTEMP\v3.0\src\train_rf_model.py
+Loading data from E:\zTEMP\v3.0\processed_data\realistic_dataset.csv...
+Training Random Forest...
+
+--- Evaluation Report ---
+Accuracy: 87.30%
+
+Classification Report:
+              precision    recall  f1-score   support
+
+  Legitimate       0.83      0.92      0.88      1945
+    Phishing       0.92      0.83      0.87      2055
+
+    accuracy                           0.87      4000
+   macro avg       0.88      0.87      0.87      4000
+weighted avg       0.88      0.87      0.87      4000
+
+ROC-AUC: 0.9244
+PR-AUC: 0.9394
+Brier Score: 0.0954
+Expected Calibration Error (ECE): 0.0262
+
+Confusion Matrix (Console):
+[[1795  150]
+ [ 358 1697]]
+
+[Visual] Confusion Matrix saved to: E:\zTEMP\v3.0\models\confusion_matrix.png
+[Visual] ROC & PR Curves saved to: E:\zTEMP\v3.0\models\roc_pr_curves.png
+
+--- COPY THESE COORDINATES FOR YOUR LATEX MANUSCRIPT ---
+ROC Coordinates:
+(0.000, 0.000) (0.000, 0.341) (0.000, 0.375) (0.000, 0.394) (0.000, 0.446) (0.000, 0.467) (0.001, 0.564) (0.001, 0.591) (0.002, 0.685) (0.012, 0.732) (0.014, 0.754) (0.076, 0.826) (0.084, 0.827) (0.229, 0.884) (0.396, 0.922) (0.879, 0.993) (0.917, 0.997) (0.939, 0.999) (0.976, 1.000) (1.000, 1.000)
+
+PR Coordinates:
+(1.000, 0.514) (1.000, 0.519) (1.000, 0.521) (0.998, 0.535) (0.993, 0.543) (0.922, 0.708) (0.884, 0.803) (0.827, 0.912) (0.826, 0.919) (0.754, 0.980) (0.752, 0.984) (0.722, 0.987) (0.683, 0.998) (0.580, 0.998) (0.473, 1.000) (0.455, 1.000) (0.407, 1.000) (0.382, 1.000) (0.341, 1.000) (0.000, 1.000)
+----------------------------------------------------------
+
+[Success] Trained model saved to: E:\zTEMP\v3.0\models\phishshield_rf.joblib
+PS E:\zTEMP\v3.0> 
