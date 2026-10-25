@@ -1,6 +1,8 @@
-- Research Paper of This Project (Pre-Print) --> [PhishShield](https://dx.doi.org/10.2139/ssrn.6981428)  
+- Research Paper of This Project (Pre-Print) --> [PhishShield](https://dx.doi.org/10.2139/ssrn.6981428)
+- **Update:** *The paper is currently under second review. it has been improved since its initial submission, but the preprint posted by the journal is the first/initial version.*  
 
 # 🛡️PhishShield🛡️  
+#### AI/ML Powered Browser Extension
 
 > [!IMPORTANT]
 > This is a Research based project, with a research paper (Currently Not Published) and With this Prototype.  
