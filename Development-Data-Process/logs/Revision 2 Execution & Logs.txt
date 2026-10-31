@@ -1,0 +1,1042 @@
+								A. rev5-cmnt1
+
+1. step1_full_sweep.py:
+import os
+import time
+import warnings
+import joblib
+import numpy as np
+import pandas as pd
+import m2cgen as m2c
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    GradientBoostingClassifier,
+    ExtraTreesClassifier,
+)
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.linear_model import LogisticRegression
+from sklearn.svm import SVC
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    confusion_matrix,
+    roc_auc_score,
+    average_precision_score,
+)
+from xgboost import XGBClassifier
+
+warnings.filterwarnings("ignore")
+
+# --- 1. Paths & Data Loading ---
+BASE_DIR = os.getcwd()
+DATA_PATH = os.path.join(BASE_DIR, "processed_data", "realistic_dataset.csv")
+TEMP_DIR = os.path.join(BASE_DIR, "temp_eval")
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+print(f"Loading final 16-feature dataset from: {DATA_PATH}")
+df = pd.read_csv(DATA_PATH)
+print(f"Dataset shape: {df.shape} | Columns: {list(df.columns)}")
+
+X = df.drop("class", axis=1)
+y = df["class"]
+
+# Exact same 80/20 split used in train_rf_model.py and ablation_test.py
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+print(f"Train samples: {len(X_train)} | Test samples: {len(X_test)}")
+print(f"Test class counts -> Phishing (1): {int((y_test == 1).sum())}, Legitimate (0): {int((y_test == 0).sum())}")
+print("=" * 120)
+
+# --- 2. Define Full Candidate Sweep ---
+candidates = [
+    # Random Forest Sweep + Golden Config
+    ("RF (Light: n=20, d=10)", RandomForestClassifier(n_estimators=20, max_depth=10, random_state=42), True),
+    ("RF (Medium: n=50, d=15)", RandomForestClassifier(n_estimators=50, max_depth=15, random_state=42), True),
+    ("RF (Heavy: n=100, d=20)", RandomForestClassifier(n_estimators=100, max_depth=20, random_state=42), True),
+    ("RF (Golden: n=100, d=10, leaf=15)", RandomForestClassifier(n_estimators=100, max_depth=10, min_samples_leaf=15, max_features="sqrt", random_state=42), True),
+
+    # XGBoost Sweep
+    ("XGB (Light: n=50, d=6)", XGBClassifier(n_estimators=50, max_depth=6, eval_metric="logloss", random_state=42), True),
+    ("XGB (Medium: n=100, d=10)", XGBClassifier(n_estimators=100, max_depth=10, eval_metric="logloss", random_state=42), True),
+    ("XGB (Heavy: n=200, d=15)", XGBClassifier(n_estimators=200, max_depth=15, eval_metric="logloss", random_state=42), True),
+
+    # Gradient Boosting Sweep
+    ("GB (Light: n=50, d=3)", GradientBoostingClassifier(n_estimators=50, max_depth=3, random_state=42), False),
+    ("GB (Medium: n=100, d=5)", GradientBoostingClassifier(n_estimators=100, max_depth=5, random_state=42), False),
+    ("GB (Heavy: n=200, d=7)", GradientBoostingClassifier(n_estimators=200, max_depth=7, random_state=42), False),
+
+    # Additional Classical & Neural Baselines on the same 16 features
+    ("Decision Tree (d=10)", DecisionTreeClassifier(max_depth=10, random_state=42), True),
+    ("Extra Trees (n=100, d=10)", ExtraTreesClassifier(n_estimators=100, max_depth=10, random_state=42), True),
+    ("Logistic Regression", LogisticRegression(max_iter=1000, random_state=42), True),
+    ("SVM (RBF Kernel)", SVC(kernel="rbf", probability=True, random_state=42), False),
+    ("MLP Neural Net (64-32-1)", MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=50, random_state=42), False),
+]
+
+header = (
+    f"{'MODEL':<33} | {'ACC%':<6} | {'PREC%':<6} | {'REC%':<6} | {'F1%':<6} | "
+    f"{'ROC-AUC':<7} | {'PR-AUC':<7} | {'FP':<4} | {'FN':<4} | {'PY(KB)':<7} | {'JS(KB)':<8}"
+)
+print(header)
+print("-" * len(header))
+
+for name, model, try_js in candidates:
+    t0 = time.time()
+    model.fit(X_train, y_train)
+    train_time = time.time() - t0
+
+    y_pred = model.predict(X_test)
+    y_prob = model.predict_proba(X_test)[:, 1]
+
+    acc = accuracy_score(y_test, y_pred) * 100
+    prec = precision_score(y_test, y_pred) * 100
+    rec = recall_score(y_test, y_pred) * 100
+    f1 = f1_score(y_test, y_pred) * 100
+    roc_auc = roc_auc_score(y_test, y_prob)
+    pr_auc = average_precision_score(y_test, y_prob)
+
+    tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+
+    # Python joblib size
+    jb_path = os.path.join(TEMP_DIR, "tmp.joblib")
+    joblib.dump(model, jb_path)
+    py_kb = os.path.getsize(jb_path) / 1024.0
+    os.remove(jb_path)
+
+    # m2cgen JS size
+    js_kb_str = "N/A"
+    if try_js:
+        try:
+            js_code = m2c.export_to_javascript(model, function_name="scoreModel")
+            js_path = os.path.join(TEMP_DIR, "tmp.js")
+            with open(js_path, "w", encoding="utf-8") as f:
+                f.write(js_code)
+            js_kb = os.path.getsize(js_path) / 1024.0
+            js_kb_str = f"{js_kb:.1f}"
+            os.remove(js_path)
+        except Exception as e:
+            js_kb_str = "Unsupported"
+
+    print(
+        f"{name:<33} | {acc:6.2f} | {prec:6.2f} | {rec:6.2f} | {f1:6.2f} | "
+        f"{roc_auc:7.4f} | {pr_auc:7.4f} | {fp:<4} | {fn:<4} | {py_kb:7.1f} | {js_kb_str:<8}"
+    )
+
+# Also run Keras Sequential NN (64 -> Dropout(0.3) -> 32 -> Dropout(0.2) -> 1) on the EXACT 16-feature split
+try:
+    import tensorflow as tf
+    from tensorflow.keras.models import Sequential
+    from tensorflow.keras.layers import Dense, Dropout
+
+    tf.random.set_seed(42)
+    np.random.seed(42)
+
+    keras_model = Sequential([
+        Dense(64, activation="relu", input_shape=[X_train.shape[1]]),
+        Dropout(0.3),
+        Dense(32, activation="relu"),
+        Dropout(0.2),
+        Dense(1, activation="sigmoid"),
+    ])
+    keras_model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+    keras_model.fit(X_train, y_train, epochs=20, batch_size=32, validation_split=0.2, verbose=0)
+
+    y_prob_k = keras_model.predict(X_test, verbose=0).ravel()
+    y_pred_k = (y_prob_k > 0.5).astype(int)
+
+    acc_k = accuracy_score(y_test, y_pred_k) * 100
+    prec_k = precision_score(y_test, y_pred_k) * 100
+    rec_k = recall_score(y_test, y_pred_k) * 100
+    f1_k = f1_score(y_test, y_pred_k) * 100
+    roc_k = roc_auc_score(y_test, y_prob_k)
+    pr_k = average_precision_score(y_test, y_prob_k)
+    tn_k, fp_k, fn_k, tp_k = confusion_matrix(y_test, y_pred_k).ravel()
+
+    k_path = os.path.join(TEMP_DIR, "tmp.keras")
+    keras_model.save(k_path)
+    k_kb = os.path.getsize(k_path) / 1024.0
+    os.remove(k_path)
+
+    print(
+        f"{'Keras Sequential NN (16-feat)':<33} | {acc_k:6.2f} | {prec_k:6.2f} | {rec_k:6.2f} | {f1_k:6.2f} | "
+        f"{roc_k:7.4f} | {pr_k:7.4f} | {fp_k:<4} | {fn_k:<4} | {k_kb:7.1f} | {'TF.js 2MB+':<8}"
+    )
+except Exception as e:
+    print(f"Keras evaluation skipped or failed: {e}")
+
+try:
+    os.rmdir(TEMP_DIR)
+except Exception:
+    pass
+print("=" * 120)
+
+2. output:
+PS E:\zTEMP\Revision\v3.0> python src/step1_full_sweep.py
+Loading final 16-feature dataset from: E:\zTEMP\Revision\v3.0\processed_data\realistic_dataset.csv
+Dataset shape: (20000, 17) | Columns: ['having_IP', 'URL_Length', 'Shortining_Service', 'having_At_Symbol', 'double_slash_redirecting', 'Prefix_Suffix', 'having_Sub_Domain', 'Hyphen_Count', 'Dot_Count', 'Numeric_Chars', 'Is_Common_TLD', 'SFH', 'Submitting_to_email', 'on_mouseover', 'RightClick', 'Iframe', 'class']
+Train samples: 16000 | Test samples: 4000
+Test class counts -> Phishing (1): 2055, Legitimate (0): 1945
+========================================================================================================================
+MODEL                             | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | PR-AUC  | FP   | FN   | PY(KB)  | JS(KB)  
+----------------------------------------------------------------------------------------------------------------------------
+RF (Light: n=20, d=10)            |  87.30 |  91.88 |  82.58 |  86.98 |  0.9244 |  0.9394 | 150  | 358  |   282.3 | 327.9   
+RF (Medium: n=50, d=15)           |  87.30 |  92.02 |  82.43 |  86.96 |  0.9254 |  0.9402 | 147  | 361  |  1029.8 | 1378.3  
+RF (Heavy: n=100, d=20)           |  87.33 |  91.97 |  82.53 |  87.00 |  0.9254 |  0.9402 | 148  | 359  |  2069.4 | 2795.0  
+RF (Golden: n=100, d=10, leaf=15) |  86.65 |  90.69 |  82.48 |  86.39 |  0.9163 |  0.9341 | 174  | 360  |   391.7 | 365.2   
+XGB (Light: n=50, d=6)            |  87.30 |  92.02 |  82.43 |  86.96 |  0.9256 |  0.9402 | 147  | 361  |    83.9 | Unsupported
+XGB (Medium: n=100, d=10)         |  87.33 |  92.07 |  82.43 |  86.98 |  0.9260 |  0.9405 | 146  | 361  |   258.1 | Unsupported
+XGB (Heavy: n=200, d=15)          |  87.33 |  92.02 |  82.48 |  86.99 |  0.9259 |  0.9403 | 147  | 360  |   708.0 | Unsupported
+GB (Light: n=50, d=3)             |  86.75 |  90.71 |  82.68 |  86.51 |  0.9175 |  0.9352 | 174  | 356  |    75.5 | N/A     
+GB (Medium: n=100, d=5)           |  87.35 |  92.07 |  82.48 |  87.01 |  0.9251 |  0.9401 | 146  | 360  |   407.3 | N/A     
+GB (Heavy: n=200, d=7)            |  87.30 |  91.92 |  82.53 |  86.97 |  0.9251 |  0.9396 | 149  | 359  |  2191.3 | N/A     
+Decision Tree (d=10)              |  87.28 |  91.97 |  82.43 |  86.94 |  0.9224 |  0.9331 | 148  | 361  |    19.6 | 21.4    
+Extra Trees (n=100, d=10)         |  87.15 |  91.45 |  82.73 |  86.87 |  0.9171 |  0.9360 | 159  | 355  |  1167.8 | 1478.6  
+Logistic Regression               |  84.72 |  89.71 |  79.37 |  84.22 |  0.8872 |  0.9010 | 187  | 424  |     1.5 | 0.6     
+SVM (RBF Kernel)                  |  86.70 |  90.53 |  82.77 |  86.48 |  0.9008 |  0.9138 | 178  | 354  |   734.6 | N/A     
+MLP Neural Net (64-32-1)          |  87.45 |  92.27 |  82.48 |  87.10 |  0.9254 |  0.9402 | 142  | 360  |   109.4 | N/A     
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1792992853.737510    5936 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1792992857.897543    5936 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+I0000 00:00:1792992860.339367    5936 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+Keras Sequential NN (16-feat)     |  87.28 |  91.92 |  82.48 |  86.95 |  0.9243 |  0.9392 | 149  | 360  |    66.8 | TF.js 2MB+
+========================================================================================================================
+PS E:\zTEMP\Revision\v3.0> 
+
+____________________________________________________________________________________________________________________________________________
+
+
+							B. rev5-cmnt2 & rev3-cmnt1,2
+
+1. step2_public_benchmarks.py:
+import os
+import io
+import re
+import time
+import zipfile
+import urllib.request
+import warnings
+import joblib
+import numpy as np
+import pandas as pd
+import m2cgen as m2c
+
+from urllib.parse import urlparse
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import (
+    RandomForestClassifier,
+    GradientBoostingClassifier,
+    ExtraTreesClassifier,
+)
+from sklearn.tree import DecisionTreeClassifier
+from sklearn.neural_network import MLPClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    average_precision_score,
+    confusion_matrix,
+)
+from xgboost import XGBClassifier
+
+warnings.filterwarnings("ignore")
+
+BASE_DIR = os.getcwd()
+DATA_DIR = os.path.join(BASE_DIR, "datasets")
+TEMP_DIR = os.path.join(BASE_DIR, "temp_bench")
+os.makedirs(DATA_DIR, exist_ok=True)
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+# Print contents of datasets folder and datasets links.txt if present
+links_file = os.path.join(DATA_DIR, "datasets links.txt")
+if os.path.exists(links_file):
+    print("=== Contents of datasets/datasets links.txt ===")
+    with open(links_file, "r", encoding="utf-8", errors="ignore") as f:
+        print(f.read())
+    print("===============================================")
+
+# Exact PhishShield 11 URL feature extractor (matching feature_extractor.js)
+SHORTENERS = [
+    "bit.ly", "goo.gl", "shorte.st", "go2l.ink", "x.co", "ow.ly", "t.co",
+    "tinyurl", "tr.im", "is.gd", "cli.gs", "yfrog.com", "migre.me", "ff.im",
+    "tiny.cc", "url4.eu", "twit.ac", "su.pr", "twurl.nl", "snipurl.com",
+    "short.to", "budurl.com", "ping.fm", "post.ly", "just.as", "bkite.com",
+    "snipr.com", "fic.kr", "loopt.us", "doiop.com", "short.ie", "kl.am",
+    "wp.me", "rubyurl.com", "om.ly", "to.ly", "bit.do", "lnkd.in", "db.tt",
+    "qr.ae", "adf.ly", "cur.lv", "ity.im", "q.gs", "po.st", "bc.vc",
+    "twitthis.com", "u.to", "j.mp", "buzurl.com", "cutt.us", "u.bb",
+    "yourls.org", "prettylinkpro.com", "scrnch.me", "filoops.info",
+    "vzturl.com", "qr.net", "1url.com", "tweez.me", "v.gd", "link.zip.net"
+]
+COMMON_TLDS = {
+    "com", "org", "net", "edu", "gov", "uk", "us", "ca",
+    "au", "de", "fr", "it", "jp", "io", "co", "ai"
+}
+IP_REGEX = re.compile(
+    r"^(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\."
+    r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\."
+    r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\."
+    r"(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$"
+)
+
+def extract_ps_11_url_features(urls):
+    rows = []
+    for u in urls:
+        u_str = str(u).strip()
+        try:
+            parsed = urlparse(u_str if "://" in u_str else "http://" + u_str)
+            domain = (parsed.hostname or "").lower()
+        except Exception:
+            domain = ""
+
+        f1 = 1 if IP_REGEX.match(domain) else 0
+        f2 = 1 if len(u_str) > 75 else 0
+        f3 = 1 if any(s in domain for s in SHORTENERS) else 0
+        f4 = 1 if "@" in u_str else 0
+        f5 = 1 if u_str.rfind("//") > 7 else 0
+        f6 = 1 if "-" in domain else 0
+
+        parts = [p for p in domain.split(".") if p and p != "www"]
+        f7 = 1 if len(parts) > 3 else 0
+        f8 = domain.count("-")
+        clean_dom = domain[4:] if domain.startswith("www.") else domain
+        f9 = clean_dom.count(".")
+        f10 = sum(c.isdigit() for c in domain)
+        suffix = parts[-1] if parts else ""
+        f11 = 0 if suffix in COMMON_TLDS else 1
+
+        rows.append([f1, f2, f3, f4, f5, f6, f7, f8, f9, f10, f11])
+    cols = [
+        "having_IP", "URL_Length", "Shortining_Service", "having_At_Symbol",
+        "double_slash_redirecting", "Prefix_Suffix", "having_Sub_Domain",
+        "Hyphen_Count", "Dot_Count", "Numeric_Chars", "Is_Common_TLD"
+    ]
+    return pd.DataFrame(rows, columns=cols)
+
+# Gupta et al. (2021) 9 lexical features for ISCX-URL-2016 comparison
+def extract_gupta_9_lexical(urls):
+    rows = []
+    for u in urls:
+        u_str = str(u).strip()
+        try:
+            parsed = urlparse(u_str if "://" in u_str else "http://" + u_str)
+            domain = (parsed.hostname or "").lower()
+            path = parsed.path or ""
+            query = parsed.query or ""
+        except Exception:
+            domain, path, query = "", "", ""
+        url_len = len(u_str)
+        dom_len = len(domain)
+        path_len = len(path)
+        num_dots = u_str.count(".")
+        num_hyphens = u_str.count("-")
+        num_slashes = u_str.count("/")
+        num_digits = sum(c.isdigit() for c in u_str)
+        num_query = len(query.split("&")) if query else 0
+        has_https = 1 if u_str.lower().startswith("https") else 0
+        rows.append([
+            url_len, dom_len, path_len, num_dots, num_hyphens,
+            num_slashes, num_digits, num_query, has_https
+        ])
+    cols = [
+        "url_len", "dom_len", "path_len", "num_dots", "num_hyphens",
+        "num_slashes", "num_digits", "num_query", "has_https"
+    ]
+    return pd.DataFrame(rows, columns=cols)
+
+def run_models_on_split(X_train, X_test, y_train, y_test, title):
+    print(f"\n==================== {title} ====================")
+    print(f"Train: {len(X_train)} | Test: {len(X_test)} | Features: {X_train.shape[1]}")
+    models = [
+        ("RF Light (n=20, d=10)", RandomForestClassifier(n_estimators=20, max_depth=10, n_jobs=-1, random_state=42), True),
+        ("RF Golden (n=100, d=10, leaf=15)", RandomForestClassifier(n_estimators=100, max_depth=10, min_samples_leaf=15, max_features="sqrt", n_jobs=-1, random_state=42), True),
+        ("RF Heavy (n=100, d=20)", RandomForestClassifier(n_estimators=100, max_depth=20, n_jobs=-1, random_state=42), True),
+        ("XGBoost (n=100, d=10)", XGBClassifier(n_estimators=100, max_depth=10, eval_metric="logloss", n_jobs=-1, random_state=42), False),
+        ("Gradient Boosting (n=100, d=5)", GradientBoostingClassifier(n_estimators=100, max_depth=5, random_state=42), False),
+        ("Extra Trees (n=100, d=10)", ExtraTreesClassifier(n_estimators=100, max_depth=10, n_jobs=-1, random_state=42), True),
+        ("Decision Tree (d=10)", DecisionTreeClassifier(max_depth=10, random_state=42), True),
+        ("MLP Neural Net (64-32-1)", MLPClassifier(hidden_layer_sizes=(64, 32), max_iter=30, random_state=42), False),
+    ]
+    hdr = f"{'MODEL':<34} | {'ACC%':<6} | {'PREC%':<6} | {'REC%':<6} | {'F1%':<6} | {'ROC-AUC':<7} | {'FPR%':<5} | {'PY(KB)':<7} | {'JS(KB)':<8}"
+    print(hdr)
+    print("-" * len(hdr))
+    for name, clf, do_js in models:
+        clf.fit(X_train, y_train)
+        y_pred = clf.predict(X_test)
+        y_prob = clf.predict_proba(X_test)[:, 1]
+        acc = accuracy_score(y_test, y_pred) * 100
+        prec = precision_score(y_test, y_pred, zero_division=0) * 100
+        rec = recall_score(y_test, y_pred, zero_division=0) * 100
+        f1 = f1_score(y_test, y_pred, zero_division=0) * 100
+        roc = roc_auc_score(y_test, y_prob)
+        tn, fp, fn, tp = confusion_matrix(y_test, y_pred).ravel()
+        fpr = (fp / (fp + tn)) * 100 if (fp + tn) > 0 else 0.0
+
+        jb_path = os.path.join(TEMP_DIR, "m.joblib")
+        joblib.dump(clf, jb_path)
+        py_kb = os.path.getsize(jb_path) / 1024.0
+        os.remove(jb_path)
+
+        js_str = "N/A"
+        if do_js:
+            try:
+                js_code = m2c.export_to_javascript(clf, function_name="scoreModel")
+                js_kb = len(js_code.encode("utf-8")) / 1024.0
+                js_str = f"{js_kb:.1f}"
+            except Exception:
+                js_str = "Err"
+
+        print(f"{name:<34} | {acc:6.2f} | {prec:6.2f} | {rec:6.2f} | {f1:6.2f} | {roc:7.4f} | {fpr:5.2f} | {py_kb:7.1f} | {js_str:<8}")
+
+# ==============================================================================
+# PART 1: PhiUSIIL BENCHMARK (235,795 URLs)
+# ==============================================================================
+phi_csv = os.path.join(DATA_DIR, "PhiUSIIL_Phishing_URL_Dataset.csv")
+if not os.path.exists(phi_csv):
+    print("\nDownloading PhiUSIIL Phishing URL Dataset from UCI Repository (ID 967)...")
+    uci_zip_url = "https://archive.ics.uci.edu/static/public/967/phiusiil+phishing+url+dataset.zip"
+    req = urllib.request.Request(uci_zip_url, headers={"User-Agent": "Mozilla/5.0"})
+    with urllib.request.urlopen(req, timeout=120) as resp:
+        zbytes = resp.read()
+    with zipfile.ZipFile(io.BytesIO(zbytes)) as zf:
+        for member in zf.namelist():
+            if member.endswith(".csv"):
+                zf.extract(member, DATA_DIR)
+                extracted_path = os.path.join(DATA_DIR, member)
+                if extracted_path != phi_csv:
+                    os.replace(extracted_path, phi_csv)
+    print(f"Saved PhiUSIIL dataset to: {phi_csv}")
+
+print(f"\nLoading PhiUSIIL dataset from {phi_csv}...")
+df_phi = pd.read_csv(phi_csv)
+print(f"PhiUSIIL shape: {df_phi.shape}")
+
+# In PhiUSIIL, label 1 = Legitimate, 0 = Phishing. Invert so 1 = Phishing (matching PhishShield)
+y_phi = (1 - df_phi["label"]).astype(int)
+print(f"PhiUSIIL Phishing (1): {int((y_phi == 1).sum())} | Legitimate (0): {int((y_phi == 0).sum())}")
+
+# Extract PhishShield 11 URL features across all 235,795 URLs
+print("Extracting PhishShield 11 URL features on all 235,795 PhiUSIIL URLs...")
+X_phi_ps11 = extract_ps_11_url_features(df_phi["URL"])
+
+# Regime A: PhishShield 11 URL features on PhiUSIIL
+X_tr, X_te, y_tr, y_te = train_test_split(X_phi_ps11, y_phi, test_size=0.2, random_state=42, stratify=y_phi)
+run_models_on_split(X_tr, X_te, y_tr, y_te, "PhiUSIIL (N=235,795) - Regime A: PhishShield 11 URL Features")
+
+# Regime B: PhishShield 16-Feature Local Browser Schema (11 URL + 5 local DOM features from PhiUSIIL)
+X_phi_ps16 = X_phi_ps11.copy()
+X_phi_ps16["SFH_proxy"] = ((df_phi["HasExternalFormSubmit"] == 1) | (df_phi["NoOfEmptyRef"] > 0)).astype(int)
+X_phi_ps16["Submit_proxy"] = df_phi["HasSubmitButton"].astype(int)
+X_phi_ps16["Popup_proxy"] = (df_phi["NoOfPopup"] > 0).astype(int)
+X_phi_ps16["Pass_proxy"] = df_phi["HasPasswordField"].astype(int)
+X_phi_ps16["Iframe"] = (df_phi["NoOfiFrame"] > 0).astype(int)
+
+X_tr16, X_te16, y_tr16, y_te16 = train_test_split(X_phi_ps16, y_phi, test_size=0.2, random_state=42, stratify=y_phi)
+run_models_on_split(X_tr16, X_te16, y_tr16, y_te16, "PhiUSIIL (N=235,795) - Regime B: 16-Feature Browser-Compatible Schema")
+
+# Regime C: Full 50 Numeric Features of PhiUSIIL
+drop_cols = [c for c in ["FILENAME", "URL", "Domain", "TLD", "Title", "label"] if c in df_phi.columns]
+X_phi_full = df_phi.drop(columns=drop_cols)
+X_tr50, X_te50, y_tr50, y_te50 = train_test_split(X_phi_full, y_phi, test_size=0.2, random_state=42, stratify=y_phi)
+run_models_on_split(X_tr50, X_te50, y_tr50, y_te50, "PhiUSIIL (N=235,795) - Regime C: All 50 Native Numeric Features")
+
+# ==============================================================================
+# PART 2: ISCX-URL-2016 BENCHMARK / CROSS-CORPUS LEXICAL COMPARISON
+# ==============================================================================
+iscx_benign_url = "https://raw.githubusercontent.com/matf-ml/ml19-classifying-spam-urls/master/Benign_list_big_final.csv"
+iscx_benign_path = os.path.join(DATA_DIR, "ISCX_Benign_list_big_final.csv")
+
+try:
+    if not os.path.exists(iscx_benign_path):
+        print("\nDownloading ISCX-URL-2016 Benign URL corpus...")
+        req = urllib.request.Request(iscx_benign_url, headers={"User-Agent": "Mozilla/5.0"})
+        with urllib.request.urlopen(req, timeout=60) as resp:
+            with open(iscx_benign_path, "wb") as f:
+                f.write(resp.read())
+
+    benign_df = pd.read_csv(iscx_benign_path, header=None)
+    benign_urls = benign_df.iloc[:, 0].dropna().astype(str).tolist()
+
+    # Load verified PhishTank URLs from datasets/phishtank_urls.csv to pair with ISCX-URL-2016 Benign (following Gupta et al. 20,000-URL benchmark protocol)
+    pt_path = os.path.join(DATA_DIR, "phishtank_urls.csv")
+    if os.path.exists(pt_path):
+        pt_df = pd.read_csv(pt_path)
+        url_col = "url" if "url" in pt_df.columns else pt_df.columns[0]
+        phish_urls = pt_df[url_col].dropna().astype(str).tolist()
+
+        n_benign = min(11964, len(benign_urls))
+        n_phish = min(7999, len(phish_urls))
+        b_sample = pd.Series(benign_urls).sample(n=n_benign, random_state=42).tolist()
+        p_sample = pd.Series(phish_urls).sample(n=n_phish, random_state=42).tolist()
+
+        all_iscx_urls = b_sample + p_sample
+        y_iscx = np.array([0] * n_benign + [1] * n_phish)
+
+        print(f"\nBenchmarking on ISCX-URL-2016 Protocol Corpus (Total={len(all_iscx_urls)}: Benign={n_benign}, Phishing={n_phish})...")
+        X_iscx_ps11 = extract_ps_11_url_features(all_iscx_urls)
+        X_itr, X_ite, y_itr, y_ite = train_test_split(X_iscx_ps11, y_iscx, test_size=0.2, random_state=42, stratify=y_iscx)
+        run_models_on_split(X_itr, X_ite, y_itr, y_ite, "ISCX-URL-2016 Benchmark - PhishShield 11 URL Features")
+
+        X_iscx_gupta9 = extract_gupta_9_lexical(all_iscx_urls)
+        X_gtr, X_gte, y_gtr, y_gte = train_test_split(X_iscx_gupta9, y_iscx, test_size=0.2, random_state=42, stratify=y_iscx)
+        run_models_on_split(X_gtr, X_gte, y_gtr, y_gte, "ISCX-URL-2016 Benchmark - Gupta et al. (2021) 9 Lexical Features")
+except Exception as e:
+    print(f"ISCX benchmark step encountered an issue: {e}")
+
+print("\nAll Step 2 benchmark evaluations completed!")
+
+2. output:
+PS E:\zTEMP\Revision\v3.0> python src/step2_public_benchmarks.py
+=== Contents of datasets/datasets links.txt ===
+https://data.phishtank.com/data/online-valid.csv
+
+https://tranco-list.eu/top-1m or https://tranco-list.eu/download_daily/NNYYW
+===============================================
+
+Downloading PhiUSIIL Phishing URL Dataset from UCI Repository (ID 967)...
+Saved PhiUSIIL dataset to: E:\zTEMP\Revision\v3.0\datasets\PhiUSIIL_Phishing_URL_Dataset.csv
+
+Loading PhiUSIIL dataset from E:\zTEMP\Revision\v3.0\datasets\PhiUSIIL_Phishing_URL_Dataset.csv...
+PhiUSIIL shape: (235795, 56)
+PhiUSIIL Phishing (1): 100945 | Legitimate (0): 134850
+Extracting PhishShield 11 URL features on all 235,795 PhiUSIIL URLs...
+
+==================== PhiUSIIL (N=235,795) - Regime A: PhishShield 11 URL Features ====================
+Train: 188636 | Test: 47159 | Features: 11
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              |  78.39 |  90.40 |  55.40 |  68.70 |  0.8311 |  4.40 |   506.6 | 607.4   
+RF Golden (n=100, d=10, leaf=15)   |  78.39 |  90.39 |  55.43 |  68.72 |  0.8311 |  4.41 |  1152.3 | 1280.5  
+RF Heavy (n=100, d=20)             |  78.39 |  90.42 |  55.38 |  68.69 |  0.8311 |  4.39 |  3133.7 | 4068.7  
+XGBoost (n=100, d=10)              |  78.39 |  90.42 |  55.38 |  68.69 |  0.8311 |  4.39 |   341.7 | N/A     
+Gradient Boosting (n=100, d=5)     |  78.39 |  90.39 |  55.42 |  68.71 |  0.8312 |  4.41 |   469.1 | N/A     
+Extra Trees (n=100, d=10)          |  78.30 |  91.45 |  54.39 |  68.21 |  0.8290 |  3.80 |  1588.2 | 2041.9  
+Decision Tree (d=10)               |  78.39 |  90.42 |  55.38 |  68.69 |  0.8311 |  4.39 |    34.4 | 40.0    
+MLP Neural Net (64-32-1)           |  78.39 |  90.39 |  55.42 |  68.71 |  0.8314 |  4.41 |    99.0 | N/A     
+
+==================== PhiUSIIL (N=235,795) - Regime B: 16-Feature Browser-Compatible Schema ====================
+Train: 188636 | Test: 47159 | Features: 16
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              |  92.20 |  87.70 |  95.12 |  91.26 |  0.9728 |  9.98 |   993.1 | 1272.4  
+RF Golden (n=100, d=10, leaf=15)   |  92.12 |  87.64 |  95.01 |  91.17 |  0.9725 | 10.03 |  2588.3 | 3269.0  
+RF Heavy (n=100, d=20)             |  92.20 |  87.59 |  95.27 |  91.27 |  0.9730 | 10.10 | 14465.8 | 22746.0 
+XGBoost (n=100, d=10)              |  92.21 |  87.60 |  95.30 |  91.29 |  0.9735 | 10.10 |   579.3 | N/A     
+Gradient Boosting (n=100, d=5)     |  92.22 |  87.61 |  95.31 |  91.30 |  0.9736 | 10.09 |   464.6 | N/A     
+Extra Trees (n=100, d=10)          |  91.91 |  87.71 |  94.31 |  90.89 |  0.9709 |  9.89 |  4222.8 | 5801.5  
+Decision Tree (d=10)               |  92.12 |  87.70 |  94.91 |  91.16 |  0.9719 |  9.97 |    47.0 | 59.3    
+MLP Neural Net (64-32-1)           |  92.21 |  87.68 |  95.18 |  91.27 |  0.9734 | 10.01 |   109.1 | N/A     
+
+==================== PhiUSIIL (N=235,795) - Regime C: All 50 Native Numeric Features ====================
+Train: 188636 | Test: 47159 | Features: 50
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |   329.8 | 371.1   
+RF Golden (n=100, d=10, leaf=15)   |  99.99 | 100.00 |  99.99 |  99.99 |  1.0000 |  0.00 |  1253.1 | 1438.3  
+RF Heavy (n=100, d=20)             | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |  2203.2 | 2795.5  
+XGBoost (n=100, d=10)              | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |    85.4 | N/A     
+Gradient Boosting (n=100, d=5)     | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |   114.3 | N/A     
+Extra Trees (n=100, d=10)          |  99.98 |  99.98 |  99.98 |  99.98 |  1.0000 |  0.01 |  2708.4 | 3568.1  
+Decision Tree (d=10)               | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |     3.0 | 0.5     
+MLP Neural Net (64-32-1)           |  99.92 |  99.94 |  99.89 |  99.91 |  1.0000 |  0.05 |   177.6 | N/A     
+
+Downloading ISCX-URL-2016 Benign URL corpus...
+
+Benchmarking on ISCX-URL-2016 Protocol Corpus (Total=19963: Benign=11964, Phishing=7999)...
+
+==================== ISCX-URL-2016 Benchmark - PhishShield 11 URL Features ====================
+Train: 15970 | Test: 3993 | Features: 11
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              |  97.50 |  96.47 |  97.31 |  96.89 |  0.9915 |  2.38 |   155.6 | 156.1   
+RF Golden (n=100, d=10, leaf=15)   |  97.45 |  96.46 |  97.19 |  96.82 |  0.9911 |  2.38 |   340.9 | 303.6   
+RF Heavy (n=100, d=20)             |  97.47 |  96.47 |  97.25 |  96.86 |  0.9905 |  2.38 |   755.6 | 783.1   
+XGBoost (n=100, d=10)              |  97.50 |  96.47 |  97.31 |  96.89 |  0.9906 |  2.38 |   171.7 | N/A     
+Gradient Boosting (n=100, d=5)     |  97.47 |  96.47 |  97.25 |  96.86 |  0.9907 |  2.38 |   343.1 | N/A     
+Extra Trees (n=100, d=10)          |  97.45 |  96.46 |  97.19 |  96.82 |  0.9906 |  2.38 |   772.7 | 887.4   
+Decision Tree (d=10)               |  97.47 |  96.47 |  97.25 |  96.86 |  0.9905 |  2.38 |     7.9 | 6.7     
+MLP Neural Net (64-32-1)           |  97.52 |  96.47 |  97.38 |  96.92 |  0.9912 |  2.38 |    99.0 | N/A     
+
+==================== ISCX-URL-2016 Benchmark - Gupta et al. (2021) 9 Lexical Features ====================
+Train: 15970 | Test: 3993 | Features: 9
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              |  99.65 |  99.87 |  99.25 |  99.56 |  0.9998 |  0.08 |   274.9 | 289.8   
+RF Golden (n=100, d=10, leaf=15)   |  99.52 |  99.87 |  98.94 |  99.40 |  0.9995 |  0.08 |   774.1 | 798.1   
+RF Heavy (n=100, d=20)             |  99.62 |  99.94 |  99.12 |  99.53 |  0.9999 |  0.04 |  1573.1 | 1809.3  
+XGBoost (n=100, d=10)              |  99.67 |  99.87 |  99.31 |  99.59 |  0.9996 |  0.08 |   167.1 | N/A     
+Gradient Boosting (n=100, d=5)     |  99.62 |  99.81 |  99.25 |  99.53 |  0.9994 |  0.13 |   375.7 | N/A     
+Extra Trees (n=100, d=10)          |  98.82 |  98.26 |  98.81 |  98.54 |  0.9995 |  1.17 |  1571.7 | 1966.6  
+Decision Tree (d=10)               |  99.52 |  99.69 |  99.12 |  99.40 |  0.9958 |  0.21 |    11.4 | 10.8    
+MLP Neural Net (64-32-1)           |  98.37 |  96.66 |  99.38 |  98.00 |  0.9991 |  2.30 |    94.9 | N/A     
+
+All Step 2 benchmark evaluations completed!
+PS E:\zTEMP\Revision\v3.0> 
+
+____________________________________________________________________________________________________________________________________________
+
+
+								C. rev3-cmnt1,2
+
+1. step3_sota_and_realistic_eval.py:
+import os
+import time
+import warnings
+import joblib
+import numpy as np
+import pandas as pd
+
+from sklearn.model_selection import train_test_split
+from sklearn.ensemble import RandomForestClassifier, HistGradientBoostingClassifier
+from sklearn.metrics import (
+    accuracy_score,
+    precision_score,
+    recall_score,
+    f1_score,
+    roc_auc_score,
+    average_precision_score,
+    confusion_matrix,
+)
+
+import tensorflow as tf
+from tensorflow.keras import layers, models, Input
+
+warnings.filterwarnings("ignore")
+tf.random.set_seed(42)
+np.random.seed(42)
+
+BASE_DIR = os.getcwd()
+DATA_PATH = os.path.join(BASE_DIR, "processed_data", "realistic_dataset.csv")
+PHI_PATH = os.path.join(BASE_DIR, "datasets", "PhiUSIIL_Phishing_URL_Dataset.csv")
+TEMP_DIR = os.path.join(BASE_DIR, "temp_sota")
+os.makedirs(TEMP_DIR, exist_ok=True)
+
+df = pd.read_csv(DATA_PATH)
+X = df.drop("class", axis=1).values.astype(np.float32)
+y = df["class"].values.astype(int)
+feature_names = list(df.drop("class", axis=1).columns)
+
+X_train, X_test, y_train, y_test = train_test_split(
+    X, y, test_size=0.2, random_state=42
+)
+
+# ==============================================================================
+# PART 1: GREY WOLF OPTIMIZER (GWO) + RF (Dandotiya et al., 2026 SOTA Paradigm)
+# ==============================================================================
+print("Running Part 1: GWO-Optimized RF (Dandotiya et al., 2026 SOTA paradigm)...")
+
+def run_gwo_rf(X_tr, y_tr, X_te, y_te, n_wolves=8, max_iter=8):
+    rng = np.random.RandomState(42)
+    dim = X_tr.shape[1] + 2  # 16 feature weights + n_estimators + max_depth
+    positions = rng.uniform(0, 1, size=(n_wolves, dim))
+    # Ensure at least one wolf starts with all features enabled
+    positions[0, :X_tr.shape[1]] = 0.9
+
+    alpha_pos, alpha_score = None, -1.0
+    beta_pos, beta_score = None, -1.0
+    delta_pos, delta_score = None, -1.0
+
+    # Internal validation split from training set only (no test leakage)
+    X_sub, X_val, y_sub, y_val = train_test_split(
+        X_tr, y_tr, test_size=0.2, random_state=42
+    )
+
+    for it in range(max_iter):
+        for i in range(n_wolves):
+            mask = positions[i, :X_tr.shape[1]] > 0.35
+            if mask.sum() < 4:
+                mask[:4] = True
+            n_est = int(20 + positions[i, -2] * 130)   # [20, 150]
+            m_dep = int(6 + positions[i, -1] * 14)     # [6, 20]
+            clf = RandomForestClassifier(
+                n_estimators=n_est, max_depth=m_dep, n_jobs=-1, random_state=42
+            )
+            clf.fit(X_sub[:, mask], y_sub)
+            score = accuracy_score(y_val, clf.predict(X_val[:, mask]))
+
+            if score > alpha_score:
+                delta_score, delta_pos = beta_score, (beta_pos.copy() if beta_pos is not None else None)
+                beta_score, beta_pos = alpha_score, (alpha_pos.copy() if alpha_pos is not None else None)
+                alpha_score, alpha_pos = score, positions[i].copy()
+            elif score > beta_score:
+                delta_score, delta_pos = beta_score, (beta_pos.copy() if beta_pos is not None else None)
+                beta_score, beta_pos = score, positions[i].copy()
+            elif score > delta_score:
+                delta_score, delta_pos = score, positions[i].copy()
+
+        a = 2.0 - it * (2.0 / max_iter)
+        for i in range(n_wolves):
+            for j in range(dim):
+                r1, r2 = rng.rand(), rng.rand()
+                X1 = alpha_pos[j] - (2 * a * r1 - a) * abs(2 * r2 * alpha_pos[j] - positions[i, j])
+                r1, r2 = rng.rand(), rng.rand()
+                X2 = beta_pos[j] - (2 * a * r1 - a) * abs(2 * r2 * beta_pos[j] - positions[i, j])
+                r1, r2 = rng.rand(), rng.rand()
+                X3 = delta_pos[j] - (2 * a * r1 - a) * abs(2 * r2 * delta_pos[j] - positions[i, j])
+                positions[i, j] = np.clip((X1 + X2 + X3) / 3.0, 0.0, 1.0)
+
+    best_mask = alpha_pos[:X_tr.shape[1]] > 0.35
+    best_n_est = int(20 + alpha_pos[-2] * 130)
+    best_m_dep = int(6 + alpha_pos[-1] * 14)
+    final_clf = RandomForestClassifier(
+        n_estimators=best_n_est, max_depth=best_m_dep, n_jobs=-1, random_state=42
+    )
+    final_clf.fit(X_tr[:, best_mask], y_tr)
+    return final_clf, best_mask, best_n_est, best_m_dep
+
+# ==============================================================================
+# PART 2: DEEP SOTA ARCHITECTURES (2024-2026)
+# 1. BiLSTM + Attention (PhishingRTDS / Asiri et al., 2024)
+# 2. TCN + Multi-Head Self-Attention (Do et al., 2025)
+# 3. Tabular Self-Attention Transformer (HET / Dam et al., 2026)
+# ==============================================================================
+def build_bilstm_attention(input_dim):
+    inp = Input(shape=(input_dim, 1))
+    x = layers.Bidirectional(layers.LSTM(32, return_sequences=True))(inp)
+    # Attention mechanism over sequence steps
+    attn = layers.Dense(1, activation="tanh")(x)
+    attn = layers.Softmax(axis=1)(attn)
+    context = layers.Multiply()([x, attn])
+    x = layers.GlobalAveragePooling1D()(context)
+    x = layers.Dense(32, activation="relu")(x)
+    out = layers.Dense(1, activation="sigmoid")(x)
+    model = models.Model(inputs=inp, outputs=out)
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+    return model
+
+def build_tcn_mhsa(input_dim):
+    inp = Input(shape=(input_dim, 1))
+    # Dilated causal/temporal convolutions (TCN block)
+    c1 = layers.Conv1D(32, kernel_size=3, padding="same", dilation_rate=1, activation="relu")(inp)
+    c2 = layers.Conv1D(32, kernel_size=3, padding="same", dilation_rate=2, activation="relu")(c1)
+    c3 = layers.Conv1D(32, kernel_size=3, padding="same", dilation_rate=4, activation="relu")(c2)
+    x = layers.Add()([c1, c3])
+    x = layers.LayerNormalization()(x)
+    # Multi-Head Self-Attention (MHSA)
+    attn_out = layers.MultiHeadAttention(num_heads=4, key_dim=8)(x, x)
+    x = layers.Add()([x, attn_out])
+    x = layers.LayerNormalization()(x)
+    x = layers.GlobalAveragePooling1D()(x)
+    x = layers.Dense(32, activation="relu")(x)
+    out = layers.Dense(1, activation="sigmoid")(x)
+    model = models.Model(inputs=inp, outputs=out)
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+    return model
+
+def build_tabular_transformer(input_dim):
+    inp = Input(shape=(input_dim, 1))
+    # Feature token projection + positional embedding
+    x = layers.Dense(32)(inp)
+    attn1 = layers.MultiHeadAttention(num_heads=4, key_dim=8)(x, x)
+    x = layers.LayerNormalization()(layers.Add()([x, attn1]))
+    ffn = layers.Dense(64, activation="relu")(x)
+    ffn = layers.Dense(32)(ffn)
+    x = layers.LayerNormalization()(layers.Add()([x, ffn]))
+    x = layers.GlobalAveragePooling1D()(x)
+    x = layers.Dropout(0.2)(x)
+    out = layers.Dense(1, activation="sigmoid")(x)
+    model = models.Model(inputs=inp, outputs=out)
+    model.compile(optimizer="adam", loss="binary_crossentropy", metrics=["accuracy"])
+    return model
+
+def measure_single_sample_latency_sklearn(clf, sample_2d, n_runs=500):
+    times = []
+    for _ in range(n_runs):
+        t0 = time.perf_counter()
+        _ = clf.predict_proba(sample_2d)
+        times.append((time.perf_counter() - t0) * 1000.0)
+    return np.median(times), np.percentile(times, 99)
+
+def measure_single_sample_latency_keras(model, sample_3d, n_runs=200):
+    # Warm-up
+    _ = model(sample_3d, training=False)
+    times = []
+    for _ in range(n_runs):
+        t0 = time.perf_counter()
+        _ = model(sample_3d, training=False)
+        times.append((time.perf_counter() - t0) * 1000.0)
+    return np.median(times), np.percentile(times, 99)
+
+print("\n==================== SOTA ARCHITECTURES ON PHISHSHIELD 20,000-URL DATASET ====================")
+hdr = f"{'SOTA ARCHITECTURE':<38} | {'ACC%':<6} | {'PREC%':<6} | {'REC%':<6} | {'F1%':<6} | {'ROC-AUC':<7} | {'FPR%':<5} | {'1-URL p50(ms)':<13} | {'SIZE(KB)':<8}"
+print(hdr)
+print("-" * len(hdr))
+
+def report_row(name, y_true, y_pred, y_prob, lat_p50, size_kb):
+    acc = accuracy_score(y_true, y_pred) * 100
+    prec = precision_score(y_true, y_pred) * 100
+    rec = recall_score(y_true, y_pred) * 100
+    f1 = f1_score(y_true, y_pred) * 100
+    roc = roc_auc_score(y_true, y_prob)
+    tn, fp, fn, tp = confusion_matrix(y_true, y_pred).ravel()
+    fpr = (fp / (fp + tn)) * 100
+    print(f"{name:<38} | {acc:6.2f} | {prec:6.2f} | {rec:6.2f} | {f1:6.2f} | {roc:7.4f} | {fpr:5.2f} | {lat_p50:13.3f} | {size_kb:8.1f}")
+
+# 1. PhishShield RF Baseline (20 trees)
+rf_base = RandomForestClassifier(n_estimators=20, max_depth=10, random_state=42)
+rf_base.fit(X_train, y_train)
+p50_rf, _ = measure_single_sample_latency_sklearn(rf_base, X_test[:1])
+report_row("PhishShield RF Baseline (n=20, d=10)", y_test, rf_base.predict(X_test), rf_base.predict_proba(X_test)[:, 1], p50_rf, 327.9)
+
+# 2. PhishShield RF Golden (100 trees, leaf=15)
+rf_gold = RandomForestClassifier(n_estimators=100, max_depth=10, min_samples_leaf=15, max_features="sqrt", random_state=42)
+rf_gold.fit(X_train, y_train)
+p50_gold, _ = measure_single_sample_latency_sklearn(rf_gold, X_test[:1])
+report_row("PhishShield RF Golden (n=100, d=10)", y_test, rf_gold.predict(X_test), rf_gold.predict_proba(X_test)[:, 1], p50_gold, 365.2)
+
+# 3. HistGradientBoosting (LightGBM algorithm)
+hgb = HistGradientBoostingClassifier(max_iter=100, max_depth=10, random_state=42)
+hgb.fit(X_train, y_train)
+jb_p = os.path.join(TEMP_DIR, "hgb.joblib")
+joblib.dump(hgb, jb_p)
+hgb_kb = os.path.getsize(jb_p) / 1024.0
+p50_hgb, _ = measure_single_sample_latency_sklearn(hgb, X_test[:1])
+report_row("HistGradientBoosting (LightGBM SOTA)", y_test, hgb.predict(X_test), hgb.predict_proba(X_test)[:, 1], p50_hgb, hgb_kb)
+
+# 4. GWO-Optimized RF (Dandotiya et al., 2026)
+gwo_clf, gwo_mask, gwo_n, gwo_d = run_gwo_rf(X_train, y_train, X_test, y_test)
+jb_gwo = os.path.join(TEMP_DIR, "gwo.joblib")
+joblib.dump(gwo_clf, jb_gwo)
+gwo_kb = os.path.getsize(jb_gwo) / 1024.0
+p50_gwo, _ = measure_single_sample_latency_sklearn(gwo_clf, X_test[:1, gwo_mask])
+report_row(f"GWO-RF (k={int(gwo_mask.sum())}/16, n={gwo_n}, d={gwo_d})", y_test, gwo_clf.predict(X_test[:, gwo_mask]), gwo_clf.predict_proba(X_test[:, gwo_mask])[:, 1], p50_gwo, gwo_kb)
+
+# Prepare 3D inputs for sequence/attention SOTA models
+X_tr_3d = np.expand_dims(X_train, axis=-1)
+X_te_3d = np.expand_dims(X_test, axis=-1)
+
+# 5. BiLSTM + Attention (PhishingRTDS 2024)
+bilstm = build_bilstm_attention(X_train.shape[1])
+bilstm.fit(X_tr_3d, y_train, epochs=15, batch_size=64, verbose=0)
+y_prob_bi = bilstm.predict(X_te_3d, verbose=0).ravel()
+p50_bi, _ = measure_single_sample_latency_keras(bilstm, X_te_3d[:1])
+k_bi = os.path.join(TEMP_DIR, "bi.keras")
+bilstm.save(k_bi)
+report_row("BiLSTM + Attention (PhishingRTDS 24)", y_test, (y_prob_bi > 0.5).astype(int), y_prob_bi, p50_bi, os.path.getsize(k_bi) / 1024.0)
+
+# 6. TCN + Multi-Head Self-Attention (Do et al., 2025)
+tcn = build_tcn_mhsa(X_train.shape[1])
+tcn.fit(X_tr_3d, y_train, epochs=15, batch_size=64, verbose=0)
+y_prob_tcn = tcn.predict(X_te_3d, verbose=0).ravel()
+p50_tcn, _ = measure_single_sample_latency_keras(tcn, X_te_3d[:1])
+k_tcn = os.path.join(TEMP_DIR, "tcn.keras")
+tcn.save(k_tcn)
+report_row("TCN + MHSA (Do et al., 2025)", y_test, (y_prob_tcn > 0.5).astype(int), y_prob_tcn, p50_tcn, os.path.getsize(k_tcn) / 1024.0)
+
+# 7. Tabular Self-Attention Transformer (HET 2026)
+het = build_tabular_transformer(X_train.shape[1])
+het.fit(X_tr_3d, y_train, epochs=15, batch_size=64, verbose=0)
+y_prob_het = het.predict(X_te_3d, verbose=0).ravel()
+p50_het, _ = measure_single_sample_latency_keras(het, X_te_3d[:1])
+k_het = os.path.join(TEMP_DIR, "het.keras")
+het.save(k_het)
+report_row("Self-Attention Transformer (HET 26)", y_test, (y_prob_het > 0.5).astype(int), y_prob_het, p50_het, os.path.getsize(k_het) / 1024.0)
+
+# ==============================================================================
+# PART 3: REALISTIC REAL-WORLD CLASS IMBALANCE & MULTI-LAYER V3.0 EVALUATION
+# (Addressing Reviewer 3 Issue i: Realistic Real-World Phishing Scenarios)
+# ==============================================================================
+print("\n==================== REALISTIC SKEWED BASE-RATE TRAFFIC SCENARIOS ====================")
+print("Evaluating Standalone RF vs. PhishShield V3.0 Multi-Layer Scoring (Heuristics + Non-Login Relaxer)")
+
+# Load PhiUSIIL test split to evaluate realistic web base rates (1:1, 1:10, 1:50, 1:100 Phish:Legit)
+if os.path.exists(PHI_PATH):
+    from step2_public_benchmarks import extract_ps_11_url_features
+    df_phi = pd.read_csv(PHI_PATH)
+    y_phi = (1 - df_phi["label"]).astype(int).values
+    X_phi_16 = extract_ps_11_url_features(df_phi["URL"])
+    X_phi_16["SFH"] = ((df_phi["HasExternalFormSubmit"] == 1) | (df_phi["NoOfEmptyRef"] > 0)).astype(int)
+    X_phi_16["Submit_email"] = df_phi["HasSubmitButton"].astype(int)
+    X_phi_16["on_mouseover"] = (df_phi["NoOfPopup"] > 0).astype(int)
+    X_phi_16["RightClick"] = df_phi["HasPasswordField"].astype(int)
+    X_phi_16["Iframe"] = (df_phi["NoOfiFrame"] > 0).astype(int)
+    has_pwd_all = df_phi["HasPasswordField"].values.astype(bool)
+
+    idx_all = np.arange(len(y_phi))
+    idx_tr, idx_te = train_test_split(idx_all, test_size=0.2, random_state=42, stratify=y_phi)
+
+    X_p_tr, y_p_tr = X_phi_16.iloc[idx_tr].values, y_phi[idx_tr]
+    X_p_te, y_p_te = X_phi_16.iloc[idx_te].values, y_phi[idx_te]
+    pwd_te = has_pwd_all[idx_te]
+
+    rf_phi = RandomForestClassifier(n_estimators=100, max_depth=10, min_samples_leaf=15, max_features="sqrt", n_jobs=-1, random_state=42)
+    rf_phi.fit(X_p_tr, y_p_tr)
+
+    raw_probs = rf_phi.predict_proba(X_p_te)[:, 1]
+
+    # Apply exact V3.0 background.js multi-layer rules (Heuristics + Non-Login Contextual Relaxer)
+    v3_scores = raw_probs.copy()
+    for i in range(len(v3_scores)):
+        s = v3_scores[i]
+        feats = X_p_te[i]
+        if feats[9] >= 4:
+            s += 0.45
+        if feats[7] > 1:
+            s += 0.25
+        if feats[10] == 1:
+            s += 0.30
+        # Non-Login Contextual Relaxer (background.js line 142)
+        if 0.50 <= s <= 0.75 and not pwd_te[i]:
+            s -= 0.20
+        v3_scores[i] = np.clip(s, 0.0, 1.0)
+
+    legit_indices = np.where(y_p_te == 0)[0]
+    phish_indices = np.where(y_p_te == 1)[0]
+    n_legit = len(legit_indices)  # 26,970 legitimate test URLs
+
+    ratios = [
+        ("Balanced Benchmark (1:1)", len(phish_indices)),
+        ("Moderate Real-World Skew (1:10 Phish:Legit)", n_legit // 10),
+        ("High Real-World Skew (1:50 Phish:Legit)", n_legit // 50),
+        ("Enterprise Browsing Skew (1:100 Phish:Legit)", n_legit // 100),
+    ]
+
+    hdr2 = f"{'TRAFFIC SCENARIO':<44} | {'PIPELINE':<18} | {'ACC%':<6} | {'PREC%':<6} | {'REC%':<6} | {'F1%':<6} | {'FPR%':<5} | {'PR-AUC':<6}"
+    print(hdr2)
+    print("-" * len(hdr2))
+
+    rng = np.random.RandomState(42)
+    for label_str, n_p_sample in ratios:
+        chosen_p = rng.choice(phish_indices, size=min(n_p_sample, len(phish_indices)), replace=False)
+        eval_idx = np.concatenate([legit_indices, chosen_p])
+        yt = y_p_te[eval_idx]
+
+        for pipe_name, probs in [("Standalone RF", raw_probs[eval_idx]), ("PhishShield V3.0", v3_scores[eval_idx])]:
+            yp = (probs > 0.50).astype(int)
+            acc = accuracy_score(yt, yp) * 100
+            prec = precision_score(yt, yp, zero_division=0) * 100
+            rec = recall_score(yt, yp, zero_division=0) * 100
+            f1 = f1_score(yt, yp, zero_division=0) * 100
+            tn, fp, fn, tp = confusion_matrix(yt, yp).ravel()
+            fpr = (fp / (fp + tn)) * 100
+            prauc = average_precision_score(yt, probs)
+            print(f"{label_str:<44} | {pipe_name:<18} | {acc:6.2f} | {prec:6.2f} | {rec:6.2f} | {f1:6.2f} | {fpr:5.2f} | {prauc:6.4f}")
+
+print("\nStep 3 evaluation complete!")
+
+2. output:
+PS E:\zTEMP\Revision\v3.0> python src/step3_sota_and_realistic_eval.py
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793020642.764512    2796 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+WARNING: All log messages before absl::InitializeLog() is called are written to STDERR
+I0000 00:00:1793020653.111831    2796 port.cc:153] oneDNN custom operations are on. You may see slightly different numerical results due to floating-point round-off errors from different computation orders. To turn them off, set the environment variable `TF_ENABLE_ONEDNN_OPTS=0`.
+Running Part 1: GWO-Optimized RF (Dandotiya et al., 2026 SOTA paradigm)...
+
+==================== SOTA ARCHITECTURES ON PHISHSHIELD 20,000-URL DATASET ====================
+SOTA ARCHITECTURE                      | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | 1-URL p50(ms) | SIZE(KB)
+-----------------------------------------------------------------------------------------------------------------------
+PhishShield RF Baseline (n=20, d=10)   |  87.30 |  91.88 |  82.58 |  86.98 |  0.9244 |  7.71 |         0.993 |    327.9
+PhishShield RF Golden (n=100, d=10)    |  86.65 |  90.69 |  82.48 |  86.39 |  0.9163 |  8.95 |         4.042 |    365.2
+HistGradientBoosting (LightGBM SOTA)   |  87.28 |  92.01 |  82.38 |  86.93 |  0.9246 |  7.56 |         1.768 |    209.2
+GWO-RF (k=16/16, n=59, d=13)           |  87.33 |  91.97 |  82.53 |  87.00 |  0.9248 |  7.61 |        32.607 |   1162.3
+I0000 00:00:1793020710.467604    2796 cpu_feature_guard.cc:227] This TensorFlow binary is optimized to use available CPU instructions in performance-critical operations.
+To enable the following instructions: SSE3 SSE4.1 SSE4.2 AVX AVX2 FMA, in other operations, rebuild TensorFlow with the appropriate compiler flags.
+WARNING:tensorflow:TensorFlow GPU support is not available on native Windows for TensorFlow >= 2.11. Even if CUDA/cuDNN are installed, GPU will not be used. Please use WSL2 or the TensorFlow-DirectML plugin.
+BiLSTM + Attention (PhishingRTDS 24)   |  85.02 |  87.76 |  82.34 |  84.96 |  0.9068 | 12.13 |        91.739 |    181.0
+TCN + MHSA (Do et al., 2025)           |  87.30 |  91.97 |  82.48 |  86.97 |  0.9240 |  7.61 |        23.861 |    217.3
+Self-Attention Transformer (HET 26)    |  79.83 |  84.25 |  74.70 |  79.18 |  0.8574 | 14.76 |        16.705 |    177.7
+
+==================== REALISTIC SKEWED BASE-RATE TRAFFIC SCENARIOS ====================
+Evaluating Standalone RF vs. PhishShield V3.0 Multi-Layer Scoring (Heuristics + Non-Login Relaxer)
+=== Contents of datasets/datasets links.txt ===
+https://data.phishtank.com/data/online-valid.csv
+
+https://tranco-list.eu/top-1m or https://tranco-list.eu/download_daily/NNYYW
+===============================================
+
+Loading PhiUSIIL dataset from E:\zTEMP\Revision\v3.0\datasets\PhiUSIIL_Phishing_URL_Dataset.csv...
+PhiUSIIL shape: (235795, 56)
+PhiUSIIL Phishing (1): 100945 | Legitimate (0): 134850
+Extracting PhishShield 11 URL features on all 235,795 PhiUSIIL URLs...
+
+==================== PhiUSIIL (N=235,795) - Regime A: PhishShield 11 URL Features ====================
+Train: 188636 | Test: 47159 | Features: 11
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              |  78.39 |  90.40 |  55.40 |  68.70 |  0.8311 |  4.40 |   506.6 | 607.4   
+RF Golden (n=100, d=10, leaf=15)   |  78.39 |  90.39 |  55.43 |  68.72 |  0.8311 |  4.41 |  1152.3 | 1280.5  
+RF Heavy (n=100, d=20)             |  78.39 |  90.42 |  55.38 |  68.69 |  0.8311 |  4.39 |  3133.7 | 4068.7  
+XGBoost (n=100, d=10)              |  78.39 |  90.42 |  55.38 |  68.69 |  0.8311 |  4.39 |   341.7 | N/A     
+Gradient Boosting (n=100, d=5)     |  78.39 |  90.39 |  55.42 |  68.71 |  0.8312 |  4.41 |   469.1 | N/A     
+Extra Trees (n=100, d=10)          |  78.30 |  91.45 |  54.39 |  68.21 |  0.8290 |  3.80 |  1588.2 | 2041.9  
+Decision Tree (d=10)               |  78.39 |  90.42 |  55.38 |  68.69 |  0.8311 |  4.39 |    34.4 | 40.0    
+MLP Neural Net (64-32-1)           |  78.39 |  90.39 |  55.42 |  68.71 |  0.8314 |  4.41 |    99.0 | N/A     
+
+==================== PhiUSIIL (N=235,795) - Regime B: 16-Feature Browser-Compatible Schema ====================
+Train: 188636 | Test: 47159 | Features: 16
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              |  92.20 |  87.70 |  95.12 |  91.26 |  0.9728 |  9.98 |   993.1 | 1272.4  
+RF Golden (n=100, d=10, leaf=15)   |  92.12 |  87.64 |  95.01 |  91.17 |  0.9725 | 10.03 |  2588.3 | 3269.0  
+RF Heavy (n=100, d=20)             |  92.20 |  87.59 |  95.27 |  91.27 |  0.9730 | 10.10 | 14465.8 | 22746.0 
+XGBoost (n=100, d=10)              |  92.21 |  87.60 |  95.30 |  91.29 |  0.9735 | 10.10 |   579.3 | N/A     
+Gradient Boosting (n=100, d=5)     |  92.22 |  87.61 |  95.31 |  91.30 |  0.9736 | 10.09 |   464.6 | N/A     
+Extra Trees (n=100, d=10)          |  91.91 |  87.71 |  94.31 |  90.89 |  0.9709 |  9.89 |  4222.8 | 5801.5  
+Decision Tree (d=10)               |  92.12 |  87.70 |  94.91 |  91.16 |  0.9719 |  9.97 |    47.0 | 59.3    
+MLP Neural Net (64-32-1)           |  92.21 |  87.68 |  95.18 |  91.27 |  0.9734 | 10.01 |   109.1 | N/A     
+
+==================== PhiUSIIL (N=235,795) - Regime C: All 50 Native Numeric Features ====================
+Train: 188636 | Test: 47159 | Features: 50
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |   329.8 | 371.1   
+RF Golden (n=100, d=10, leaf=15)   |  99.99 | 100.00 |  99.99 |  99.99 |  1.0000 |  0.00 |  1253.1 | 1438.3  
+RF Heavy (n=100, d=20)             | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |  2203.2 | 2795.5  
+XGBoost (n=100, d=10)              | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |    85.4 | N/A     
+Gradient Boosting (n=100, d=5)     | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |   114.3 | N/A     
+Extra Trees (n=100, d=10)          |  99.98 |  99.98 |  99.98 |  99.98 |  1.0000 |  0.01 |  2708.4 | 3568.1  
+Decision Tree (d=10)               | 100.00 | 100.00 | 100.00 | 100.00 |  1.0000 |  0.00 |     3.0 | 0.5     
+MLP Neural Net (64-32-1)           |  99.92 |  99.94 |  99.89 |  99.91 |  1.0000 |  0.05 |   177.6 | N/A     
+
+Benchmarking on ISCX-URL-2016 Protocol Corpus (Total=19963: Benign=11964, Phishing=7999)...
+
+==================== ISCX-URL-2016 Benchmark - PhishShield 11 URL Features ====================
+Train: 15970 | Test: 3993 | Features: 11
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              |  97.50 |  96.47 |  97.31 |  96.89 |  0.9915 |  2.38 |   155.6 | 156.1   
+RF Golden (n=100, d=10, leaf=15)   |  97.45 |  96.46 |  97.19 |  96.82 |  0.9911 |  2.38 |   340.9 | 303.6   
+RF Heavy (n=100, d=20)             |  97.47 |  96.47 |  97.25 |  96.86 |  0.9905 |  2.38 |   755.6 | 783.1   
+XGBoost (n=100, d=10)              |  97.50 |  96.47 |  97.31 |  96.89 |  0.9906 |  2.38 |   171.7 | N/A     
+Gradient Boosting (n=100, d=5)     |  97.47 |  96.47 |  97.25 |  96.86 |  0.9907 |  2.38 |   343.1 | N/A     
+Extra Trees (n=100, d=10)          |  97.45 |  96.46 |  97.19 |  96.82 |  0.9906 |  2.38 |   772.7 | 887.4   
+Decision Tree (d=10)               |  97.47 |  96.47 |  97.25 |  96.86 |  0.9905 |  2.38 |     7.9 | 6.7     
+MLP Neural Net (64-32-1)           |  97.52 |  96.47 |  97.38 |  96.92 |  0.9912 |  2.38 |    99.0 | N/A     
+
+==================== ISCX-URL-2016 Benchmark - Gupta et al. (2021) 9 Lexical Features ====================
+Train: 15970 | Test: 3993 | Features: 9
+MODEL                              | ACC%   | PREC%  | REC%   | F1%    | ROC-AUC | FPR%  | PY(KB)  | JS(KB)  
+-------------------------------------------------------------------------------------------------------------
+RF Light (n=20, d=10)              |  99.65 |  99.87 |  99.25 |  99.56 |  0.9998 |  0.08 |   274.9 | 289.8   
+RF Golden (n=100, d=10, leaf=15)   |  99.52 |  99.87 |  98.94 |  99.40 |  0.9995 |  0.08 |   774.1 | 798.1   
+RF Heavy (n=100, d=20)             |  99.62 |  99.94 |  99.12 |  99.53 |  0.9999 |  0.04 |  1573.1 | 1809.3  
+XGBoost (n=100, d=10)              |  99.67 |  99.87 |  99.31 |  99.59 |  0.9996 |  0.08 |   167.1 | N/A     
+Gradient Boosting (n=100, d=5)     |  99.62 |  99.81 |  99.25 |  99.53 |  0.9994 |  0.13 |   375.7 | N/A     
+Extra Trees (n=100, d=10)          |  98.82 |  98.26 |  98.81 |  98.54 |  0.9995 |  1.17 |  1571.7 | 1966.6  
+Decision Tree (d=10)               |  99.52 |  99.69 |  99.12 |  99.40 |  0.9958 |  0.21 |    11.4 | 10.8    
+MLP Neural Net (64-32-1)           |  98.37 |  96.66 |  99.38 |  98.00 |  0.9991 |  2.30 |    94.9 | N/A     
+
+All Step 2 benchmark evaluations completed!
+TRAFFIC SCENARIO                             | PIPELINE           | ACC%   | PREC%  | REC%   | F1%    | FPR%  | PR-AUC
+----------------------------------------------------------------------------------------------------------------------
+Balanced Benchmark (1:1)                     | Standalone RF      |  92.12 |  87.64 |  95.01 |  91.17 | 10.03 | 0.9582
+Balanced Benchmark (1:1)                     | PhishShield V3.0   |  88.81 |  93.57 |  79.30 |  85.85 |  4.08 | 0.9331
+Moderate Real-World Skew (1:10 Phish:Legit)  | Standalone RF      |  90.44 |  48.67 |  95.14 |  64.40 | 10.03 | 0.8207
+Moderate Real-World Skew (1:10 Phish:Legit)  | PhishShield V3.0   |  94.47 |  66.21 |  79.90 |  72.41 |  4.08 | 0.6930
+High Real-World Skew (1:50 Phish:Legit)      | Standalone RF      |  90.05 |  15.83 |  94.43 |  27.12 | 10.03 | 0.6198
+High Real-World Skew (1:50 Phish:Legit)      | PhishShield V3.0   |  95.62 |  28.25 |  80.33 |  41.80 |  4.08 | 0.3269
+Enterprise Browsing Skew (1:100 Phish:Legit) | Standalone RF      |  90.04 |   8.80 |  97.03 |  16.13 | 10.03 | 0.5095
+Enterprise Browsing Skew (1:100 Phish:Legit) | PhishShield V3.0   |  95.75 |  16.09 |  78.44 |  26.71 |  4.08 | 0.2032
+
+Step 3 evaluation complete!
+PS E:\zTEMP\Revision\v3.0> 
